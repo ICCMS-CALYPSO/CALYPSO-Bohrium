@@ -10,9 +10,13 @@ import oss2
 
 # os.system("echo 'Split = T' >> /root/run_test/Test_bak/input.dat")
 
-MaxStep = 5
-PopSize = 5
-N_INCAR = 1
+def get_value(key):
+    temp = (os.popen(f'grep {key} input.dat').read().split('=')[-1])
+    return temp 
+
+MaxStep = int(get_value('MaxStep'))
+PopSize = int(get_value('PopSize'))
+N_INCAR = int(get_value('NumberOfLOcalOptim'))
 
 machine = Machine.load_from_json('machine.json')
 resources = Resources.load_from_json('resources.json')
