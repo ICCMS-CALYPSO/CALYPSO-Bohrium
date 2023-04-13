@@ -1,5 +1,8 @@
 #!/usr/bin/env python
+import os
+import shutil
 
+from dpdispatcher import Task
 
 qe='''Nat=`grep 'number of k points' -B 2 out.pw | head -n 1 | awk {'print($1)'}`;StruLine=`expr $Nat + 5 `; grep 'CELL_' -A $StruLine out.pw | tail -n `expr $StruLine + 1` > pwscf'''
 
@@ -62,7 +65,11 @@ def qe_task(pop, task_dir, N_INCAR, command):
         forward_files = ['pwscf', 'pwscf.ori'] + [f'pw_input_{idx}' for idx in range(1, N_INCAR + 1)] + [p_name for p_name in _pp_name],
         backward_files = ['out.pw', 'pwscf', 'log', 'err'] + [f'out.pw_{idx}' for idx in range(1, N_INCAR + 1)] 
     )
+    return task
 
 def qe_back(task_dir, pop):
+    # natoms = get_pwscf_natoms(os.path.join(task_dir, "pwscf.ori"))
+    # os.system(f'echo {str(natoms)} > natoms ')
+    # os.system('cat natoms {os.path.join(task_dir, "pwscf.ori")} > {os.path.join(task_dir, "pwscf.ori")}')
     shutil.copyfile(os.path.join(task_dir, "out.pw"), "out.pw_%d"%pop )
     shutil.copyfile(os.path.join(task_dir, "pwscf.ori"), "pwscf_%d"%pop )
