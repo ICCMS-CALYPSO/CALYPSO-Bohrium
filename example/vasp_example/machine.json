@@ -1,0 +1,22 @@
+{
+        "batch_type": "Lebesgue",
+        "context_type": "LebesgueContext",
+        "local_root" : "./",
+        "remote_profile":{
+          "email": "wzy@calypso.cn",
+          "password": "zhenyu1234!",
+          "program_id": 12111,
+            "_keep_backup":true,
+            "input_data":{
+              "job_type": "indicate",
+              "log_file": "log",
+              "grouped":true,
+              "job_name": "calypso.Bohrium.test.1",
+              "disk_size": 200,
+              "machine_type":"c16_m32_cpu",
+              "platform": "ali",
+              "image_name":"LBG_VASP_5.4.4_v1",
+              "on_demand":0
+            }
+        }
+}
