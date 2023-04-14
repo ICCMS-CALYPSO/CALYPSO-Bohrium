@@ -47,6 +47,7 @@ def qe_command(N_INCAR, ncpu):
 
 def qe_task(pop, task_dir, N_INCAR, command):
 
+    pp_dir, _pp_name = get_pp('pw_input_1')
     if not os.path.exists('pickup') or (os.path.exists('pickup') and os.path.exists('restart')):
         # depand on the type of dft software
         shutil.copyfile("pwscf_%d"%pop, os.path.join(task_dir, "pwscf"))
@@ -55,7 +56,6 @@ def qe_task(pop, task_dir, N_INCAR, command):
         for n_incar in range(1, N_INCAR + 1):
             update_input("pw_input_%d"%n_incar, natoms)
             shutil.copyfile("pw_input_%d"%n_incar , os.path.join(task_dir, "pw_input_%d"%n_incar))
-            pp_dir, _pp_name = get_pp('pw_input_1')
             for pp_name in _pp_name:
                 shutil.copyfile(pp_dir + '/' + pp_name, os.path.join(task_dir, pp_name))
 

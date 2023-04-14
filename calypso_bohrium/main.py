@@ -72,10 +72,10 @@ def main(dft):
         )
         submission.run_submission()
 
-        # if os.path.exists('pickup'):
-        #     os.system('mv pickup pickup_done')
-        # if os.path.exists('restart'):
-        #     os.system('mv restart restart_done')
+        if os.path.exists('pickup'):
+            os.system('mv pickup pickup_done')
+        if os.path.exists('restart'):
+            os.system('mv restart restart_done')
     
         for pop in range(1, PopSize + 1):
             task_dir = "./data/step%03d.pop%03d" % (step, pop)
