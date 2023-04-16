@@ -6,7 +6,7 @@ import shutil
 import dpdata
 from dpdispatcher import Task
 
-from write_outcar import write_files
+from calypso_bohrium.write_outcar import write_files
 
 
 def read_abacus(path):
@@ -35,16 +35,33 @@ def read_stress(filepath):
     return stress_list
 
 def sort_abacus():
-    stru_list = glob.glob('./OUT.ABACUS/STRU_ION*_D')
+    stru_list = glob.glob('./OUT.*/STRU_ION*_D')
     t = stru_list.sort(key=lambda x: int(x.split('_')[1].strip('ION')))
 
     return t[-1]
 
 def to_stru(name):
+    with open('pp', 'r') as f:
+        pp_file = f.readlines()
+    pp = []
+    for temp in pp_file:
+        pp.append(temp)
+
     data = dpdata.System(name, 'vasp/poscar')
-    data.to_abacus_stru('stru')
+    n_species = len(data.data['atom_names'])
+    data.to_abacus_stru('STRU')
+    with open('STRU', 'r') as f:
+        lines = f.readlines()
+    for idx, line in enumerate(lines):
+        if 'ATOMIC_SPECIES' in line:
+            for ii in range(n_species):
+                lines[idx+ii+1] = pp[ii]
+            break
+    with open('STRU', 'w') as f:
+        f.write(''.join(lines))
 
 def get_pp(filename):
+    p_name = []
     with open(filename, 'r') as f:
         lines = f.readlines()
     for line in lines:
@@ -61,20 +78,21 @@ def abacus_command(N_INCAR, ncpu):
     pre_command = "OMP_NUM_THREADS=1;"
     if N_INCAR == 1:
         command_runvasp_list = [
-            "cp INPUT_1 INPUT; mpirun -n {ncpu} abacus > fp.log 2>&1"
+            f"cp INPUT_1 INPUT; mpirun -n {ncpu} abacus > fp.log 2>&1"
             ]  # cpu number how to detect
         command_runvasp = ";".join(command_runvasp_list)
+        print(command_runvasp)
         return command_runvasp
 
     elif N_INCAR == 2:
-        string = "cp INPUT_1 INPUT; mpirun -n {ncpu} abacus > fp.log 2>&1"
+        string = f"cp INPUT_1 INPUT; mpirun -n {ncpu} abacus > fp.log 2>&1"
         name = sort_abacus()
-        os.system('./OUT.ABACUS ./OUT.ABACUS.1')
+        os.system('mkdir -p old; mv ./OUT.* ./old')
         string += f"cp {name} ./STRU; cp INPUT_2 INPUT; mpirun -n {ncpu} abacus > fp.log 2>&1;"
         return string
 
     elif N_INCAR == 3:
-        string = "cp INPUT_1 INPUT; mpirun -n {ncpu} abacus > fp.log 2>&1"
+        string = f"cp INPUT_1 INPUT; mpirun -n {ncpu} abacus > fp.log 2>&1"
         name = sort_abacus()
         os.system('./OUT.ABACUS ./OUT.ABACUS.1')
         string += f"cp {name} ./STRU; cp INPUT_2 INPUT; mpirun -n {ncpu} abacus > fp.log 2>&1;"
@@ -88,7 +106,7 @@ def abacus_task(pop, task_dir, N_INCAR, command):
     _pp_name = get_pp('pp')
     if not os.path.exists('pickup') or (os.path.exists('pickup') and os.path.exists('restart')):
         to_stru("POSCAR_%d" % pop)
-        os.system("cat pp stru > STRU")
+        # os.system("cat pp stru > STRU")
         shutil.copyfile("STRU" , os.path.join(task_dir, "STRU"))
         shutil.copyfile("POSCAR_%d" % pop, os.path.join(task_dir, "POSCAR.ori"))
         for n_incar in range(1, N_INCAR + 1):

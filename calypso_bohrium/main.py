@@ -18,7 +18,7 @@ task_back = {'vasp':vasp_back, 'qe':qe_back, 'abacus':abacus_back}
 dft_command = {'vasp':vasp_command, 'qe':qe_command, 'abacus':abacus_command}
 
 @click.command()
-@click.option("--dft", default="vasp", type=click.Choice(['vasp', 'qe']), help="dft calculator selection, support vasp and qe currently")
+@click.option("--dft", default="vasp", type=click.Choice(['vasp', 'qe', 'abacus']), help="dft calculator selection, support vasp and qe currently")
 def main(dft):
 
     if get_value("Split") == "":
