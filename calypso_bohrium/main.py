@@ -10,11 +10,12 @@ from dpdispatcher import Machine, Resources, Submission
 from calypso_bohrium.utils import get_value
 from calypso_bohrium.vasp import vasp_command, vasp_task, vasp_back
 from calypso_bohrium.qe import qe_command, qe_task, qe_back
+from calypso_bohrium.abacus import abacus_command, abacus_task, abacus_back
 
 
-dft_task = {'vasp':vasp_task, 'qe':qe_task}
-task_back = {'vasp':vasp_back, 'qe':qe_back}
-dft_command = {'vasp':vasp_command, 'qe':qe_command}
+dft_task = {'vasp':vasp_task, 'qe':qe_task, 'abacus':abacus_task}
+task_back = {'vasp':vasp_back, 'qe':qe_back, 'abacus':abacus_back}
+dft_command = {'vasp':vasp_command, 'qe':qe_command, 'abacus':abacus_command}
 
 @click.command()
 @click.option("--dft", default="vasp", type=click.Choice(['vasp', 'qe']), help="dft calculator selection, support vasp and qe currently")

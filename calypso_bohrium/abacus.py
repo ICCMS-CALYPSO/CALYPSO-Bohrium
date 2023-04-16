@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import os
+import glob
 import shutil
 
 import dpdata
@@ -33,35 +34,79 @@ def read_stress(filepath):
             stress_list.append(float(value))
     return stress_list
 
+def sort_abacus():
+    stru_list = glob.glob('./OUT.ABACUS/STRU_ION*_D')
+    t = stru_list.sort(key=lambda x: int(x.split('_')[1].strip('ION')))
+
+    return t[-1]
+
+def to_stru(name):
+    data = dpdata.System(name, 'vasp/poscar')
+    data.to_abacus_stru('stru')
+
+def get_pp(filename):
+    with open(filename, 'r') as f:
+        lines = f.readlines()
+    for line in lines:
+        if len(line.strip('\n').strip()) == 0:
+            continue
+        if 'ATOMIC_SPECIES' in line:
+            continue
+        if 'upf' in line.strip('\n').strip().split()[-1].lower():
+            p_name.append(line.strip('\n').strip().split()[-1])
+    return p_name
+
 def abacus_command(N_INCAR, ncpu):
 
-    command_runvasp_list = [
-        f"cp INCAR_{idx} INCAR; mpirun -n {ncpu} vasp_std > fp.log 2>&1"
-        for idx in range(1, N_INCAR + 1)
-    ]  # cpu number how to detect
-    command_runvasp = ";".join(command_runvasp_list)
+    pre_command = "OMP_NUM_THREADS=1;"
+    if N_INCAR == 1:
+        command_runvasp_list = [
+            "cp INPUT_1 INPUT; mpirun -n {ncpu} abacus > fp.log 2>&1"
+            ]  # cpu number how to detect
+        command_runvasp = ";".join(command_runvasp_list)
+        return command_runvasp
 
-    return command_runvasp
+    elif N_INCAR == 2:
+        string = "cp INPUT_1 INPUT; mpirun -n {ncpu} abacus > fp.log 2>&1"
+        name = sort_abacus()
+        os.system('./OUT.ABACUS ./OUT.ABACUS.1')
+        string += f"cp {name} ./STRU; cp INPUT_2 INPUT; mpirun -n {ncpu} abacus > fp.log 2>&1;"
+        return string
+
+    elif N_INCAR == 3:
+        string = "cp INPUT_1 INPUT; mpirun -n {ncpu} abacus > fp.log 2>&1"
+        name = sort_abacus()
+        os.system('./OUT.ABACUS ./OUT.ABACUS.1')
+        string += f"cp {name} ./STRU; cp INPUT_2 INPUT; mpirun -n {ncpu} abacus > fp.log 2>&1;"
+        name = sort_abacus()
+        os.system('./OUT.ABACUS ./OUT.ABACUS.2')
+        string += f"cp {name} ./STRU; cp INPUT_3 INPUT; mpirun -n {ncpu} abacus > fp.log 2>&1;"
+        return string
 
 def abacus_task(pop, task_dir, N_INCAR, command):
 
-   if not os.path.exists('pickup') or (os.path.exists('pickup') and os.path.exists('restart')):
-       shutil.copyfile("POSCAR_%d" % pop, os.path.join(task_dir, "POSCAR"))
-       shutil.copyfile("POSCAR_%d" % pop, os.path.join(task_dir, "POSCAR.ori"))
-       for n_incar in range(1, N_INCAR + 1):
-           shutil.copyfile(
-               "INCAR_%d" % n_incar, os.path.join(task_dir, "INCAR_%d" % n_incar)
-           )
-           shutil.copyfile("POTCAR", os.path.join(task_dir, "POTCAR"))
-   
-   task = Task(
-       command=command,
-       task_work_path=task_dir,
-       forward_files=["POSCAR", "POTCAR"]
-       + [f"INCAR_{idx}" for idx in range(1, N_INCAR + 1)],
-       backward_files=["CONTCAR", "OUTCAR", "log", "err"],
-   )
-   return task
+    _pp_name = get_pp('pp')
+    if not os.path.exists('pickup') or (os.path.exists('pickup') and os.path.exists('restart')):
+        to_stru("POSCAR_%d" % pop)
+        os.system("cat pp stru > STRU")
+        shutil.copyfile("STRU" , os.path.join(task_dir, "STRU"))
+        shutil.copyfile("POSCAR_%d" % pop, os.path.join(task_dir, "POSCAR.ori"))
+        for n_incar in range(1, N_INCAR + 1):
+            shutil.copyfile(
+                "INPUT_%d" % n_incar, os.path.join(task_dir, "INPUT_%d" % n_incar)
+            )
+            for pp_name in _pp_name:
+                shutil.copyfile('./' + pp_name, os.path.join(task_dir, pp_name))
+    
+    task = Task(
+        command=command,
+        task_work_path=task_dir,
+        forward_files=["STRU"] + [p_name for p_name in _pp_name]
+        + [f"INPUT_{idx}" for idx in range(1, N_INCAR + 1)],
+        # backward_files=["STRU", "OUTCAR", "log", "err"],
+        backward_files=[],
+    )
+    return task
 
 def abacus_back(task_dir, pop):
     atoms, is_success = read_abacus('./')
