@@ -6,13 +6,16 @@ from dpdispatcher import Task
 
 def vasp_command(N_INCAR, ncpu):
 
+    pre_command = "cp POSCAR.ori CONTCAR;"
     command_runvasp_list = [
-        f"cp INCAR_{idx} INCAR; mpirun -n {ncpu} vasp_std > fp.log 2>&1"
+        f"cp CONTCAR POSCAR; cp INCAR_{idx} INCAR; mpirun -n {ncpu} vasp_std > fp.log 2>&1"
         for idx in range(1, N_INCAR + 1)
     ]  # cpu number how to detect
     command_runvasp = ";".join(command_runvasp_list)
 
-    return command_runvasp
+    command = pre_command + command_runvasp_list
+ 
+    return command
 
 def vasp_task(pop, task_dir, N_INCAR, command):
 
