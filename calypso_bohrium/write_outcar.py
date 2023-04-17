@@ -76,7 +76,7 @@ def write_files(atoms, pstress, is_success, task_dir):
     # kBar to eV/A^3
     # 1 eV/A^3 = 160.21766028 GPa
     # 1 / 160.21766028 ~ 0.006242
-    print(pstress, is_success)
+    # print(pstress, is_success)
 
     atoms_lat = atoms.cell
     atoms_pos = atoms.positions

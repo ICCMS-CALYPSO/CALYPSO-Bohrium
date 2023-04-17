@@ -14,7 +14,7 @@ def read_abacus(path):
     try:
         atoms_list = dpdata.LabeledSystem(path, 'abacus/relax').to_ase_structure()
     except Exception as e:
-        print('read_abacus', e)
+        # print('read_abacus', e)
         stru_path = os.path.join(path, 'STRU')
         atoms_list = dpdata.System(stru_path, 'abacus/stru').to_ase_structure()
         is_success = False
