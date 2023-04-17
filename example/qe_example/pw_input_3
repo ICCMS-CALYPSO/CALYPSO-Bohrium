@@ -22,8 +22,8 @@
    ! cosAB = 0.49517470 ,
    ! cosAC = 0.49517470 ,
    !  cosBC = 0.49517470 ,
-nat = 8,
-                        ntyp  =  1 , 
+nat = 15,
+                        ntyp  =  2 , 
                      ecutwfc  =  25.0 ,
                      ecutrho  =  100.0 , 
                  occupations  =  'smearing' ,
@@ -45,6 +45,7 @@ nat = 8,
    wmass =  0.00700000  ,
  /
 ATOMIC_SPECIES
-   As   74.90000  As.pz-bhs.UPF
+   B   10.81     B-PBE.upf  
+   N   14.007    N-PBE.upf
 K_POINTS {automatic}
 2 2 2 0 0 0

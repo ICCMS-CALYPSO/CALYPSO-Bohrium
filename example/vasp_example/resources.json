@@ -1,5 +1,5 @@
 {
-        "group_size": 5,
+        "group_size": 1,
         "local_root":"./",
         "source_list": ["/opt/intel/oneapi/setvars.sh"]
 }

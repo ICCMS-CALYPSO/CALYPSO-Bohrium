@@ -10,12 +10,14 @@
             "input_data":{
               "job_type": "indicate",
               "log_file": "log",
+              "out_files": ["out.pw_1", "out.pw_2", "out.pw_3", "out.pw", "log", "err"],
               "grouped":true,
-              "job_name": "calypso.Bohrium.test.1",
+              "job_name": "qe-sabc-vary-formula-BN",
               "disk_size": 200,
+	      "max_run_time":40,
               "machine_type":"c16_m32_cpu",
               "platform": "ali",
-              "image_name":"LBG_VASP_5.4.4_v1",
+              "image_name":"registry.dp.tech/dptech/quantum-espresso:7.1",
               "on_demand":0
             }
         }
