@@ -13,6 +13,7 @@ build-backend = "setuptools.build_meta"
     dependencies = [
         "ase",
         "click",
+        "dpdata",
         "dpdispatcher",
         "kaleido",
         "matplotlib",
@@ -23,6 +24,7 @@ build-backend = "setuptools.build_meta"
         "pymatgen",
         "scienceplots",
         "scipy",
+        "pyarrow",
         "spglib",
     ]
     requires-python = ">=3.7.4"
