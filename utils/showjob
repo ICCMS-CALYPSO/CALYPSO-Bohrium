@@ -1,0 +1,19 @@
+#!/bin/bash
+
+printf "%s               %20s               %20s   \n" name PID work_path
+for i in `ps aux | grep run_calypso | grep -v grep | awk '{print $2}'`
+do
+	work_path=$(pwdx $i)
+	work_path=`echo ${work_path} | cut -d ':' -f 2`
+	# echo -e "$i               ${work_path}        run_calypso"
+	printf "%-20s               %-3d               %-30s   \n" run_calypso ${i} ${work_path} 
+done
+
+for i in `ps aux | grep calypso.x | grep -v grep | awk '{print $2}'`
+do
+	work_path=$(pwdx $i)
+	work_path=`echo ${work_path} | cut -d ':' -f 2`
+	# echo -e "$i               $work_path        calypso.x"
+	printf "%-20s               %-3d               %-30s   \n" calypso.x ${i} ${work_path} 
+done
+

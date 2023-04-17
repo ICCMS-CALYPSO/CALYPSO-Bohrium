@@ -13,7 +13,7 @@ def vasp_command(N_INCAR, ncpu):
     ]  # cpu number how to detect
     command_runvasp = ";".join(command_runvasp_list)
 
-    command = pre_command + command_runvasp_list
+    command = pre_command + command_runvasp
  
     return command
 
