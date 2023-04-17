@@ -11,9 +11,19 @@ build-backend = "setuptools.build_meta"
         {name = "Xiaoshan Luo", email = "luoxs@calypso.cn"},
     ]
     dependencies = [
+        "ase",
+        "click",
+        "dpdispatcher",
+        "kaleido",
+        "matplotlib",
         "numpy",
         "oss2",
-        "dpdispatcher",
+        "pandas",
+        "plotly",
+        "pymatgen",
+        "scienceplots",
+        "scipy",
+        "spglib",
     ]
     requires-python = ">=3.7.4"
     readme = "README.md"
@@ -24,13 +34,8 @@ build-backend = "setuptools.build_meta"
     ]
     keywords = []
     classifiers = [
-        "Programming Language :: Python :: 3.7",
-        "Programming Language :: Python :: 3.8",
-        "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
-        "Programming Language :: Python :: 3.11",
         "Operating System :: POSIX :: Linux",
-        "Operating System :: MacOS :: MacOS X"
     ]
 
 [project.optional-dependencies]
@@ -56,7 +61,7 @@ build-backend = "setuptools.build_meta"
     packages = ["calypso_bohrium"]
 
 [tool.setuptools_scm]
-write_to = "calypso_bohrium/_version.py"
+    write_to = "calypso_bohrium/_version.py"
 
 [tool.black]
     skip-string-normalization = true
