@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+import os
 import numpy as np
 
 
@@ -15,9 +16,9 @@ def get_element_num(elements):
         ele[x] = elements.count(x)
     return element, ele
 
-def write_contcar(element, ele, lat, pos):
+def write_contcar(element, ele, lat, pos, task_dir):
     '''Write CONTCAR'''
-    f = open('CONTCAR','w')
+    f = open(os.path.join(task_dir, 'CONTCAR'),'w')
     f.write('CALYPSO\n')
     f.write('1.0\n')
     for i in range(3):
@@ -34,9 +35,10 @@ def write_contcar(element, ele, lat, pos):
     for i in range(na):
         f.write('%15.10f %15.10f %15.10f\n' % tuple(dpos[i]))
 
-def write_outcar(element, ele, volume, lat, pos, ene, force, stress,pstress):
+def write_outcar(element, ele, volume, lat, pos, ene, force, stress, pstress, task_dir):
     '''Write OUTCAR'''
-    f = open('OUTCAR','w')
+    # f = open('OUTCAR','w')
+    f = open(os.path.join(task_dir, 'OUTCAR'),'w')
     for x in element:
         f.write('VRHFIN =' + str(x) + '\n')
     f.write('ions per type =')
@@ -68,12 +70,13 @@ def write_outcar(element, ele, volume, lat, pos, ene, force, stress,pstress):
     enthalpy = ene + pstress * volume / 1602.17733
     f.write('enthalpy is  TOTEN    = %20.6f %20.6f\n' % (enthalpy, enthalpy/na))
 
-def write_files(atoms, pstress, is_success=True):
+def write_files(atoms, pstress, is_success, task_dir):
 
     # pstress kbar
     # kBar to eV/A^3
     # 1 eV/A^3 = 160.21766028 GPa
     # 1 / 160.21766028 ~ 0.006242
+    print(pstress, is_success)
 
     atoms_lat = atoms.cell
     atoms_pos = atoms.positions
@@ -86,7 +89,7 @@ def write_files(atoms, pstress, is_success=True):
     atoms_vol = atoms.get_volume()
     element, ele = get_element_num(atoms_symbols)
 
-    write_contcar(element, ele, atoms_lat, atoms_pos)
-    write_outcar(element, ele, atoms_vol, atoms_lat, atoms_pos,atoms_ene, atoms_force, atoms_stress * -10.0, pstress)
+    write_contcar(element, ele, atoms_lat, atoms_pos, task_dir)
+    write_outcar(element, ele, atoms_vol, atoms_lat, atoms_pos,atoms_ene, atoms_force, atoms_stress * -10.0, pstress, task_dir)
 
 

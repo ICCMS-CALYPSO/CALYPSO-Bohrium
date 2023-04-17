@@ -14,7 +14,7 @@ def read_abacus(path):
     try:
         atoms_list = dpdata.LabeledSystem(path, 'abacus/relax').to_ase_structure()
     except Exception as e:
-        print(e)
+        print('read_abacus', e)
         stru_path = os.path.join(path, 'STRU')
         atoms_list = dpdata.System(stru_path, 'abacus/stru').to_ase_structure()
         is_success = False
@@ -75,40 +75,38 @@ def get_pp(filename):
 
 def abacus_command(N_INCAR, ncpu):
 
+    python_command = "python -c 'import glob, os; t=glob.glob('./OUT.*/STRU_ION*_D');t.sort(key=lambda x: int(x.split('_')[1].strip('ION')));os.system(cp t[-1] STRU)'"
     pre_command = "OMP_NUM_THREADS=1;"
     if N_INCAR == 1:
         command_runvasp_list = [
             f"cp INPUT_1 INPUT; mpirun -n {ncpu} abacus > fp.log 2>&1"
             ]  # cpu number how to detect
         command_runvasp = ";".join(command_runvasp_list)
-        print(command_runvasp)
         return command_runvasp
 
     elif N_INCAR == 2:
-        string = f"cp INPUT_1 INPUT; mpirun -n {ncpu} abacus > fp.log 2>&1"
-        name = sort_abacus()
-        os.system('mkdir -p old; mv ./OUT.* ./old')
-        string += f"cp {name} ./STRU; cp INPUT_2 INPUT; mpirun -n {ncpu} abacus > fp.log 2>&1;"
+        
+        string = f"cp INPUT_1 INPUT; mpirun -n {ncpu} abacus > fp.log 2>&1; python continue.py;mkdir -p old; mv ./OUT.* ./old;"
+        string += f"cp INPUT_2 INPUT; mpirun -n {ncpu} abacus > fp.log 2>&1;"
         return string
 
     elif N_INCAR == 3:
-        string = f"cp INPUT_1 INPUT; mpirun -n {ncpu} abacus > fp.log 2>&1"
-        name = sort_abacus()
-        os.system('./OUT.ABACUS ./OUT.ABACUS.1')
-        string += f"cp {name} ./STRU; cp INPUT_2 INPUT; mpirun -n {ncpu} abacus > fp.log 2>&1;"
-        name = sort_abacus()
-        os.system('./OUT.ABACUS ./OUT.ABACUS.2')
-        string += f"cp {name} ./STRU; cp INPUT_3 INPUT; mpirun -n {ncpu} abacus > fp.log 2>&1;"
+        string = f"cp INPUT_1 INPUT; mpirun -n {ncpu} abacus > fp.log 2>&1; python continue.py;mkdir -p old; mv ./OUT.* ./old;"
+        string += f"cp INPUT_2 INPUT; mpirun -n {ncpu} abacus > fp.log 2>&1;python continue.py;mkdir -p old; mv ./OUT.* ./old;"
+        string += f"cp INPUT_3 INPUT; mpirun -n {ncpu} abacus > fp.log 2>&1;"
         return string
 
 def abacus_task(pop, task_dir, N_INCAR, command):
 
     _pp_name = get_pp('pp')
+    with open('continue.py', 'w') as f:
+        f.write("import glob, os\nt=glob.glob('./OUT.*/STRU_ION*_D')\nt.sort(key=lambda x: int(x.split('_')[1].strip('ION')))\nos.system(f'cp {t[-1]} STRU')\n")
     if not os.path.exists('pickup') or (os.path.exists('pickup') and os.path.exists('restart')):
         to_stru("POSCAR_%d" % pop)
         # os.system("cat pp stru > STRU")
         shutil.copyfile("STRU" , os.path.join(task_dir, "STRU"))
         shutil.copyfile("POSCAR_%d" % pop, os.path.join(task_dir, "POSCAR.ori"))
+        shutil.copyfile("continue.py" , os.path.join(task_dir, "continue.py"))
         for n_incar in range(1, N_INCAR + 1):
             shutil.copyfile(
                 "INPUT_%d" % n_incar, os.path.join(task_dir, "INPUT_%d" % n_incar)
@@ -119,7 +117,7 @@ def abacus_task(pop, task_dir, N_INCAR, command):
     task = Task(
         command=command,
         task_work_path=task_dir,
-        forward_files=["STRU"] + [p_name for p_name in _pp_name]
+        forward_files=["STRU"] + [p_name for p_name in _pp_name] + ['continue.py']
         + [f"INPUT_{idx}" for idx in range(1, N_INCAR + 1)],
         # backward_files=["STRU", "OUTCAR", "log", "err"],
         backward_files=[],
@@ -127,12 +125,12 @@ def abacus_task(pop, task_dir, N_INCAR, command):
     return task
 
 def abacus_back(task_dir, pop):
-    atoms, is_success = read_abacus('./')
+    atoms, is_success = read_abacus(task_dir)
 
-    stress_list = read_stress('./INPUT')
+    stress_list = read_stress(os.path.join(task_dir, './INPUT'))
     pstress = sum(stress_list)/len(stress_list) if len(stress_list) != 0 else 0.00001
     
-    write_files(atoms, pstress, is_success)
+    write_files(atoms, pstress, is_success, task_dir)
 
     shutil.copyfile(os.path.join(task_dir, "CONTCAR"), "CONTCAR_%d" % pop)
     shutil.copyfile(os.path.join(task_dir, "OUTCAR"), "OUTCAR_%d" % pop)
