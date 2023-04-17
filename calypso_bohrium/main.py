@@ -53,11 +53,11 @@ def main(dft):
     for step in range(PickStep, MaxStep + 1):
 
         if not os.path.exists('pickup'):
-            os.system("./calypso.x | tee caly.log")
+            os.system("calypso.x | tee caly.log")
         elif os.path.exists('pickup') and not os.path.exists('restart'):
             pass
         elif (os.path.exists('pickup') and os.path.exists('restart')):
-            os.system("./calypso.x | tee caly.log")
+            os.system("calypso.x | tee caly.log")
             step += 1
     
         task_list = []
@@ -84,5 +84,5 @@ def main(dft):
 
         os.system('mv *.sub lbg-*.sh *_fail *_finished log_dir/')
     
-    os.system("./calypso.x | tee caly.log")
+    os.system("calypso.x | tee caly.log")
 
