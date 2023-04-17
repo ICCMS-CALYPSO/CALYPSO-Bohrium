@@ -1,0 +1,50 @@
+ &CONTROL
+   calculation =   "vc-relax"   ,
+   restart_mode = 'from_scratch' ,
+   outdir='./tmp' ,
+   pseudo_dir = './' ,
+   disk_io = 'default' ,
+   verbosity = 'default' ,
+   tstress = .true. ,
+   tprnfor = .true. ,
+   nstep =  30  ,
+               etot_conv_thr = 1.0E-4  ,
+               forc_conv_thr = 1.0D-3 ,
+                      iprint = 1 ,
+                 max_seconds = 500 ,
+                          dt = 150 ,
+ /
+ &SYSTEM
+   ibrav = 0 ,
+   celldm(1) = 1.0,
+   !B = 1.889726878 ,
+   !C = 1.889726878,
+   ! cosAB = 0.49517470 ,
+   ! cosAC = 0.49517470 ,
+   !  cosBC = 0.49517470 ,
+nat = 8,
+                        ntyp  =  1 , 
+                     ecutwfc  =  25.0 ,
+                     ecutrho  =  100.0 , 
+                 occupations  =  'smearing' ,
+                    smearing  =  'mp' ,
+                     degauss  =  0.005 ,
+                       nspin  =  1 , 
+                  lda_plus_u  =  .false. , 
+ /
+ &ELECTRONS
+            electron_maxstep  =  70  , 
+                    conv_thr  =  1.0d-7  , 
+             diagonalization   =   'david'   ,  
+ /
+ &IONS
+ /
+ &CELL
+   cell_dynamics = 'damp-w' ,
+   press = 0.00 ,
+   wmass =  0.00700000  ,
+ /
+ATOMIC_SPECIES
+   As   74.90000  As.pz-bhs.UPF
+K_POINTS {automatic}
+2 2 2 0 0 0

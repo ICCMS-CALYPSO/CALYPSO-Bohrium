@@ -1,0 +1,75 @@
+[build-system]
+requires = ["setuptools>=45", "setuptools-scm[toml]>=6.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+    name = "calypso_bohrium"
+    dynamic = ["version"]
+    description = "CALYPSO Crystal Structure Prediction package on Bohrium Platform"
+    authors = [
+        {name = "Zhenyu Wang", email = "wangzy@calypso.cn"},
+        {name = "Xiaoshan Luo", email = "luoxs@calypso.cn"},
+    ]
+    dependencies = [
+        "ase",
+        "click",
+        "dpdispatcher",
+        "kaleido",
+        "matplotlib",
+        "numpy",
+        "oss2",
+        "pandas",
+        "plotly",
+        "pymatgen",
+        "scienceplots",
+        "scipy",
+        "spglib",
+    ]
+    requires-python = ">=3.7.4"
+    readme = "README.md"
+    license = {text = ""}
+    maintainers = [
+        {name = "Zhenyu Wang", email = "wangzy@calypso.cn"},
+        {name = "Xiaoshan Luo", email = "luoxs@calypso.cn"},
+    ]
+    keywords = []
+    classifiers = [
+        "Programming Language :: Python :: 3.10",
+        "Operating System :: POSIX :: Linux",
+    ]
+
+[project.optional-dependencies]
+    docs = [
+        "sphinx>=5.3.0",
+        "myst-parser>=1.0.0",
+        "sphinx-rtd-theme>=1.2.0",
+        "numpydoc>=1.5.0",
+    ]
+    test = [
+        "coverage"
+    ]
+
+[project.urls]
+    homepage = "http://www.calypso.cn/"
+    # repository = ""
+    # documentation = ""
+
+[project.scripts]
+    "run_calypso" = "calypso_bohrium.main:main"
+
+[tool.setuptools]
+    packages = ["calypso_bohrium"]
+
+[tool.setuptools_scm]
+    write_to = "calypso_bohrium/_version.py"
+
+[tool.black]
+    skip-string-normalization = true
+    max-length = 88
+
+[tool.isort]
+    profile = "black"
+
+[tool.mypy]
+    follow-imports = "silent"
+    show-column-numbers = true
