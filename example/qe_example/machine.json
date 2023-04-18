@@ -3,9 +3,9 @@
         "context_type": "LebesgueContext",
         "local_root" : "./",
         "remote_profile":{
-          "email": "wzy@calypso.cn",
-          "password": "zhenyu1234!",
-          "program_id": 12111,
+          "email": "",
+          "password": "",
+          "program_id": ,
             "_keep_backup":true,
             "input_data":{
               "job_type": "indicate",
