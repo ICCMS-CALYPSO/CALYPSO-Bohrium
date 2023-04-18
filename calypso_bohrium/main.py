@@ -82,7 +82,7 @@ def main(dft):
             task_dir = "./data/step%03d.pop%03d" % (step, pop)
             task_back[dft](task_dir, pop)
 
-        os.system('mv *.sub lbg-*.sh *_fail *_finished log_dir/')
+        os.system('mv *.sub lbg-*.sh *_fail *_finish log_dir/')
     
     os.system("calypso.x | tee caly.log")
 
