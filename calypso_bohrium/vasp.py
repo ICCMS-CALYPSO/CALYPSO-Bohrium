@@ -31,7 +31,7 @@ def vasp_task(pop, task_dir, N_INCAR, command):
    task = Task(
        command=command,
        task_work_path=task_dir,
-       forward_files=["POSCAR", "POTCAR"]
+       forward_files=["POSCAR", "POTCAR", "POSCAR.ori"]
        + [f"INCAR_{idx}" for idx in range(1, N_INCAR + 1)],
        backward_files=["CONTCAR", "OUTCAR", "log", "err"],
    )
