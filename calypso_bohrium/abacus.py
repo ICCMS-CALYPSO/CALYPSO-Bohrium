@@ -13,8 +13,11 @@ def read_abacus(path):
     is_success = True
     try:
         atoms_list = dpdata.LabeledSystem(path, 'abacus/relax').to_ase_structure()
+        if len(atoms_list) == 0:
+            stru_path = os.path.join(path, 'STRU')
+            atoms_list = dpdata.System(stru_path, 'abacus/stru').to_ase_structure()
+            is_success = False
     except Exception as e:
-        # print('read_abacus', e)
         stru_path = os.path.join(path, 'STRU')
         atoms_list = dpdata.System(stru_path, 'abacus/stru').to_ase_structure()
         is_success = False
@@ -85,14 +88,13 @@ def abacus_command(N_INCAR, ncpu):
         return command_runvasp
 
     elif N_INCAR == 2:
-        
-        string = f"cp INPUT_1 INPUT; mpirun -n {ncpu} abacus > fp.log 2>&1; python continue.py;mkdir -p old; mv ./OUT.* ./old;"
+        string = f"cp INPUT_1 INPUT; mpirun -n {ncpu} abacus > fp.log 2>&1; python continue.py;mkdir -p old.1; mv ./OUT.* ./old.1;"
         string += f"cp INPUT_2 INPUT; mpirun -n {ncpu} abacus > fp.log 2>&1;"
         return string
 
     elif N_INCAR == 3:
-        string = f"cp INPUT_1 INPUT; mpirun -n {ncpu} abacus > fp.log 2>&1; python continue.py;mkdir -p old; mv ./OUT.* ./old;"
-        string += f"cp INPUT_2 INPUT; mpirun -n {ncpu} abacus > fp.log 2>&1;python continue.py;mkdir -p old; mv ./OUT.* ./old;"
+        string = f"cp INPUT_1 INPUT; mpirun -n {ncpu} abacus > fp.log 2>&1; python continue.py; mkdir -p old.1; mv ./OUT.* ./old.1;"
+        string += f"cp INPUT_2 INPUT; mpirun -n {ncpu} abacus > fp.log 2>&1; python continue.py; mkdir -p old.2; mv ./OUT.* ./old.2;"
         string += f"cp INPUT_3 INPUT; mpirun -n {ncpu} abacus > fp.log 2>&1;"
         return string
 
