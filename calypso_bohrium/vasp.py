@@ -17,7 +17,7 @@ def vasp_command(N_INCAR, ncpu):
  
     return command
 
-def vasp_task(pop, task_dir, N_INCAR, command):
+def vasp_task(pop, task_dir, N_INCAR, command, backward_files=["CONTCAR", "OUTCAR", "fp.log", "OSZICAR", "err"]):
 
    if not os.path.exists('pickup') or (os.path.exists('pickup') and os.path.exists('restart')):
        shutil.copyfile("POSCAR_%d" % pop, os.path.join(task_dir, "POSCAR"))
@@ -33,7 +33,7 @@ def vasp_task(pop, task_dir, N_INCAR, command):
        task_work_path=task_dir,
        forward_files=["POSCAR", "POTCAR", "POSCAR.ori"]
        + [f"INCAR_{idx}" for idx in range(1, N_INCAR + 1)],
-       backward_files=["CONTCAR", "OUTCAR", "log", "err"],
+       backward_files=backward_files,
    )
    return task
 

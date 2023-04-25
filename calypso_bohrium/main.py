@@ -26,6 +26,8 @@ def main(dft):
 
     machine = Machine.load_from_json("machine.json")
     resources = Resources.load_from_json("resources.json")
+
+    out_files = machine.input_data['out_files']
     
     _ncpu = machine.input_data["machine_type"].split("_")[0].strip("c")
     ncpu = _ncpu if _ncpu != "" else 32
@@ -65,7 +67,7 @@ def main(dft):
             task_dir = "./data/step%03d.pop%03d" % (step, pop)
             Path(task_dir).mkdir(parents=True, exist_ok=True)
     
-            task = dft_task[dft](pop, task_dir, N_INCAR, command)
+            task = dft_task[dft](pop, task_dir, N_INCAR, command, out_files)
             task_list.append(task)
 
         submission = Submission(

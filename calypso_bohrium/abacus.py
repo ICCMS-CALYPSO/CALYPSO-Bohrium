@@ -98,7 +98,7 @@ def abacus_command(N_INCAR, ncpu):
         string += f"cp INPUT_3 INPUT; mpirun -n {ncpu} abacus > fp.log 2>&1;"
         return string
 
-def abacus_task(pop, task_dir, N_INCAR, command):
+def abacus_task(pop, task_dir, N_INCAR, command, backward_files=[]):
 
     _pp_name = get_pp('pp')
     with open('continue.py', 'w') as f:
@@ -122,7 +122,7 @@ def abacus_task(pop, task_dir, N_INCAR, command):
         forward_files=["STRU"] + [p_name for p_name in _pp_name] + ['continue.py']
         + [f"INPUT_{idx}" for idx in range(1, N_INCAR + 1)],
         # backward_files=["STRU", "OUTCAR", "log", "err"],
-        backward_files=[],
+        backward_files=backward_files,
     )
     return task
 
