@@ -1585,6 +1585,7 @@ def run():
 
     if options.plotevo:
         import matplotlib.pyplot as plt
+        import matplotlib
         import scienceplots
         
         plt.style.use(['science', 'ieee'])
@@ -1606,7 +1607,8 @@ def run():
         min_y = temp[0] if temp[0] > -1000 else temp[1]
 
         # colormap
-        cm = plt.cm.get_cmap('rainbow')
+        # cm = plt.cm.get_cmap('rainbow')
+        cm = matplotlib.colormaps['rainbow']
         
         # fig, ax
         fig, ax = plt.subplots(figsize=(10, 4))
@@ -1621,7 +1623,7 @@ def run():
         # ax.set_yticks([-3.6, -3.5, -3.4, -3.3, -3.2],)
 
         # ax.tick_params(width=5, labelsize=10)
-        ax.set_ylim((min_y, max_y))
+        ax.set_ylim((min_y+0.05, max_y+0.05))
         
         plt.tick_params(labelsize=20)
         
