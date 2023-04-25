@@ -27,7 +27,7 @@ def main(dft):
     machine = Machine.load_from_json("machine.json")
     resources = Resources.load_from_json("resources.json")
 
-    out_files = machine.input_data['out_files']
+    out_files = machine.input_data.get('out_files', [])
     
     _ncpu = machine.input_data["machine_type"].split("_")[0].strip("c")
     ncpu = _ncpu if _ncpu != "" else 32
