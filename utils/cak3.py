@@ -17,6 +17,7 @@
 # Author : Zhenyu Wang <wzy@calypso.cn>
 # Version 2022.07.01 update to python3 version with spglib-v1.16.0
 # Version 2022.10.12 update to python3 version with spglib-v2.0.1
+# Version 2023.04.19 support to plot convexhull and evo by --plotch and --plotevo
 #
 # Copyright CALYPSO Develop Group
 
