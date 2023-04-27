@@ -1623,7 +1623,7 @@ def run():
         # ax.set_yticks([-3.6, -3.5, -3.4, -3.3, -3.2],)
 
         # ax.tick_params(width=5, labelsize=10)
-        ax.set_ylim((min_y+0.05, max_y+0.05))
+        ax.set_ylim((min_y+0.3, max_y+0.3))
         
         plt.tick_params(labelsize=20)
         
