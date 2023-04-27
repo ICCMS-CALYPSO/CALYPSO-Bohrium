@@ -12,12 +12,12 @@
               "log_file": "log",
               "grouped":true,
               "job_name": "calypso.Bohrium.test.1",
-	      "out_files": ["OUTCAR", "CONTCAR", "OSZICAR", "fp.log", "log", "err"],
+	          "out_files": ["OUTCAR", "CONTCAR", "OSZICAR", "fp.log", "log", "err"],
               "disk_size": 200,
-	      "max_run_time":40,
+	          "max_run_time":40,
               "machine_type":"c16_m32_cpu",
               "platform": "ali",
-              "image_name":"LBG_VASP_5.4.4_v1",
+              "image_name":"registry.dp.tech/dptech/vasp:5.4.4-calypso",
               "on_demand":0
             }
         }
