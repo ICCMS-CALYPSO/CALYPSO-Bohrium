@@ -16,7 +16,7 @@
 	      "max_run_time":40,
               "machine_type":"c16_m32_cpu",
               "platform": "ali",
-              "image_name":"registry.dp.tech/dptech/abacus:3.2.0",
+              "image_name":"registry.dp.tech/dptech/abacus:3.2.1-calypso",
               "on_demand":0
             }
         }

@@ -13,7 +13,7 @@ stress_thr              10
 relax_method            cg
 out_stru                1
 
-ecutwfc                 100
+ecutwfc                 60
 scf_thr                 1e-4
 scf_nmax                60
 

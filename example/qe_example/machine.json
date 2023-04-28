@@ -14,10 +14,10 @@
               "grouped":true,
               "job_name": "qe-sabc-vary-formula-BN",
               "disk_size": 200,
-	      "max_run_time":40,
+    	      "max_run_time":40,
               "machine_type":"c16_m32_cpu",
               "platform": "ali",
-              "image_name":"registry.dp.tech/dptech/quantum-espresso:7.1",
+              "image_name":"registry.dp.tech/dptech/quantum-espresso:7.1-calypso",
               "on_demand":0
             }
         }

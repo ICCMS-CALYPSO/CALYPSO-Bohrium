@@ -45,7 +45,7 @@ def qe_command(N_INCAR, ncpu):
     command_runvasp = ';'.join(command_runvasp_list)
     return command_runvasp
 
-def qe_task(pop, task_dir, N_INCAR, command):
+def qe_task(pop, task_dir, N_INCAR, command, backward_files=['out.pw', 'pwscf', 'log', 'err']):
 
     pp_dir, _pp_name = get_pp('pw_input_1')
     if not os.path.exists('pickup') or (os.path.exists('pickup') and os.path.exists('restart')):
@@ -63,7 +63,8 @@ def qe_task(pop, task_dir, N_INCAR, command):
         command = command,
         task_work_path = task_dir,
         forward_files = ['pwscf', 'pwscf.ori'] + [f'pw_input_{idx}' for idx in range(1, N_INCAR + 1)] + [p_name for p_name in _pp_name],
-        backward_files = ['out.pw', 'pwscf', 'log', 'err'] + [f'out.pw_{idx}' for idx in range(1, N_INCAR + 1)] 
+        # backward_files = ['out.pw', 'pwscf', 'log', 'err'] + [f'out.pw_{idx}' for idx in range(1, N_INCAR + 1)] 
+        backward_files = backward_files
     )
     return task
 

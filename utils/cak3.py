@@ -1,4 +1,3 @@
-#!/opt/mamba/bin/python
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
@@ -18,6 +17,7 @@
 # Author : Zhenyu Wang <wzy@calypso.cn>
 # Version 2022.07.01 update to python3 version with spglib-v1.16.0
 # Version 2022.10.12 update to python3 version with spglib-v2.0.1
+# Version 2023.04.19 support to plot convexhull and evo by --plotch and --plotevo
 #
 # Copyright CALYPSO Develop Group
 
@@ -1585,6 +1585,7 @@ def run():
 
     if options.plotevo:
         import matplotlib.pyplot as plt
+        import matplotlib
         import scienceplots
         
         plt.style.use(['science', 'ieee'])
@@ -1606,7 +1607,8 @@ def run():
         min_y = temp[0] if temp[0] > -1000 else temp[1]
 
         # colormap
-        cm = plt.cm.get_cmap('rainbow')
+        # cm = plt.cm.get_cmap('rainbow')
+        cm = matplotlib.colormaps['rainbow']
         
         # fig, ax
         fig, ax = plt.subplots(figsize=(10, 4))
@@ -1621,7 +1623,7 @@ def run():
         # ax.set_yticks([-3.6, -3.5, -3.4, -3.3, -3.2],)
 
         # ax.tick_params(width=5, labelsize=10)
-        ax.set_ylim((min_y, max_y))
+        ax.set_ylim((min_y+0.3, max_y+0.3))
         
         plt.tick_params(labelsize=20)
         

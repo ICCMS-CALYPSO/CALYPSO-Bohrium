@@ -13,7 +13,7 @@ stress_thr              5
 relax_method            cg
 out_stru                1
 
-# ecutwfc                 100
+ecutwfc                 80
 scf_thr                 1e-5
 scf_nmax                60
 
@@ -32,7 +32,7 @@ mixing_type             pulay
 mixing_beta             0.7
 
 ks_solver               dav
-kspacing                0.25
+kspacing                0.2
 #kpar                    4
 
 #Parameters (6.Stress)
