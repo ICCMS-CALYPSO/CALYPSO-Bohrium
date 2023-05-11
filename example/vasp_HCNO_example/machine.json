@@ -8,7 +8,7 @@
     "program_id": 000000,
     "_keep_backup": true,
     "input_data": {
-      "job_name": "calypso.Bohrium.test.1",
+      "job_name": "HCNO-vsc",
       "image_name": "******",
       "job_type": "indicate",
       "log_file": "log",
