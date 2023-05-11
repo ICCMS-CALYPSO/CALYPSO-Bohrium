@@ -1,0 +1,17 @@
+SYSTEM = local optimisation
+PREC = Accurate 
+ENCUT = 550
+EDIFF = 1e-6
+KSPACING=0.3
+SYMPREC=1e-4
+IBRION = 2
+ISIF = 3
+NSW = 200
+ISMEAR = 0 ; SIGMA = 0.05
+POTIM = 0.10
+#Wavefunction and charge
+LWAVE = FALSE
+LCHARG = FALSE
+#Target Pressure
+PSTRESS = 5000
+
