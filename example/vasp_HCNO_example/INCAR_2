@@ -1,0 +1,18 @@
+SYSTEM =HCNO
+PREC = Normal
+EDIFF = 1e-4
+IBRION = 2
+SYMPREC=1e-4
+ISIF = 4
+KSPACING= 0.5
+NSW = 55
+ISMEAR = 0 ; SIGMA = 0.05
+POTIM = 0.200
+#Wavefunction and charge
+ISTART = 0
+LWAVE = FALSE
+LCHARG = FALSE
+#Target Pressure
+PSTRESS = 5000
+#Crude optimisation
+
