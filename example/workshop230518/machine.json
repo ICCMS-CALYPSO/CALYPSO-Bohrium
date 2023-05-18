@@ -8,15 +8,15 @@
     "program_id": 000000,
     "_keep_backup": true,
     "input_data": {
-      "job_name": "HCNO-vsc",
-      "image_name": "******",
+      "job_name": "CALYPSO-VSC-ws230518",
+      "image_name": "registry.dp.tech/dptech/vasp:5.4.4-calypso",
       "job_type": "indicate",
       "log_file": "log",
       "grouped": true,
       "disk_size": 200,
       "max_run_time": 40,
-      "machine_type": "c16_m32_cpu",
-      "platform": "ali",
+      "machine_type": "c16_m64_cpu",
+      "platform": "paratera",
       "on_demand": 0,
       "out_files": ["OUTCAR", "CONTCAR", "OSZICAR", "fp.log", "log", "err"]
     }
