@@ -20,12 +20,15 @@ def dp_task(pop, task_dir, N_INCAR, command, backward_files=["CONTCAR", "OUTCAR"
         shutil.copyfile("POSCAR_%d" % pop, os.path.join(task_dir, "POSCAR"))
         shutil.copyfile("POSCAR_%d" % pop, os.path.join(task_dir, "POSCAR.ori"))
 
+    shutil.copyfile("input.dat", os.path.join(task_dir, "input.dat"))
     shutil.copyfile("frozen_model.pb", os.path.join(task_dir, "frozen_model.pb"))
+    shutil.copyfile("calypso_run_opt.py", os.path.join(task_dir, "calypso_run_opt.py"))
+    shutil.copyfile("calypso_check_outcar.py", os.path.join(task_dir, "calypso_check_outcar.py"))
     
     task = Task(
         command=command,
         task_work_path=task_dir,
-        forward_files=["POSCAR", "frozen_model.pb", "POSCAR.ori", "calypso_run_opt.py", "calypso_check_outcar.py"],
+        forward_files=["POSCAR", "frozen_model.pb", "input.dat", "calypso_run_opt.py", "calypso_check_outcar.py"],
         backward_files=backward_files,
     )
     return task
