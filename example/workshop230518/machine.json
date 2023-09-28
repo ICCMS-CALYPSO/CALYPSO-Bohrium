@@ -9,7 +9,7 @@
     "_keep_backup": true,
     "input_data": {
       "job_name": "CALYPSO-VSC-ws230518",
-      "image_name": "registry.dp.tech/dptech/vasp:5.4.4-calypso",
+      "image_name": "*****",
       "job_type": "indicate",
       "log_file": "log",
       "grouped": true,
