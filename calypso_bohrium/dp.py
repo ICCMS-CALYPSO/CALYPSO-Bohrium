@@ -7,10 +7,10 @@ from dpdispatcher import Task
 def dp_command(N_INCAR, ncpu):
 
     pre_command = ""
-    command_runvasp_list = ["python calypso_run_opt.py >> opt.log 2>&1 || python calypso_check_outcar.py >> opt.log 2>&1"]
-    command_runvasp = ";".join(command_runvasp_list)
+    command_rundp_list = ["python calypso_run_opt.py >> opt.log 2>&1 || python calypso_check_outcar.py >> opt.log 2>&1"]
+    command_rundp = ";".join(command_rundp_list)
 
-    command = pre_command + command_runvasp
+    command = pre_command + command_rundp
  
     return command
 
