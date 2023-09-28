@@ -1,0 +1,24 @@
+{
+  "batch_type": "Lebesgue",
+  "context_type": "LebesgueContext",
+  "local_root": "./",
+  "remote_profile": {
+    "email": "***",
+    "password": "****",
+    "program_id": 0000,
+    "_keep_backup": true,
+    "input_data": {
+      "job_name": "calypso.dp",
+      "image_name": "registry.dp.tech/dptech/prod-11265/calypso-bohrium-deepmd:v2.2.2-cuda11.6-ase",
+      "job_type": "indicate",
+      "log_file": "log",
+      "grouped": true,
+      "disk_size": 200,
+      "max_run_time": 40,
+      "machine_type": "c8_m64_cpu",
+      "platform": "ali",
+      "on_demand": 0,
+      "out_files": []
+    }
+  }
+}
