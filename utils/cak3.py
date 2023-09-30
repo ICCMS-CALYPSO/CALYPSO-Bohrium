@@ -286,6 +286,7 @@ def parseStruct():
     ldate = len(date)
     while True:
         if 'nstruct' in date[i]:
+            forme = 0.
             hardness = 0.
             polar = 0.
             bandgap = 100.
@@ -352,7 +353,7 @@ def parseStruct():
                             i = k
                             lcurr = False
 
-            structData.append( [energy, hardness, nstruct, gtype, (lat, pos, typt, natom), polar, bandgap, xrddiff] )
+            structData.append( [energy, hardness, nstruct, gtype, (lat, pos, typt, natom), polar, bandgap, xrddiff, forme] )
             # print 'i', i, ldate
             if i +10 > ldate - 1  :
                 break
@@ -1435,7 +1436,8 @@ def vsckit(structure, vsce, name_ele, options, prec_pool, is_refine, is_prim, ha
                 e1 += vsce[k]*BStruct[i][j][4][2][k]
             forme = (BStruct[i][j][0] * BStruct[i][j][4][3] - e1) / BStruct[i][j][4][3]
             # forme = BStruct[i][j][0]
-            BStruct[i][j].append(forme)
+            # BStruct[i][j].append(forme)
+            BStruct[i][j][8] = forme
 
     # for i in range(len(BStruct)):
     for key in typt_dict :
@@ -1726,7 +1728,7 @@ def run():
         else:
             struct = parseOpt('opt', hm)
 
-    # struct [0] enthalpy; [1] hardness; [2] nstruct; [3] gtype; [4] cell; [5] polar; [6] bandgap
+    # struct [0] enthalpy; [1] hardness; [2] nstruct; [3] gtype; [4] cell; [5] polar; [6] bandgap; [7] xrddiff, [8] forme=0
 
     structure = []
 
@@ -1796,6 +1798,14 @@ def run():
             structure.sort(key=lambda x:x[1])
         else:
             structure.sort(key=lambda x:x[0])
+            print(vsce)
+            for j in range(len(structure)):
+                e1 = 0.
+                for k in range(len(vsce)):
+                    e1 += vsce[k]*structure[j][4][2][k]
+                forme = (structure[j][0] * structure[j][4][3] - e1) / structure[j][4][3]
+                # forme = BStruct[i][j][0]
+                structure[j][8] = forme
         if hm:
             structure.sort(key=lambda x:x[5], reverse=True)
         if bg:
