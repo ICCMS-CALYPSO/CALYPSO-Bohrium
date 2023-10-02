@@ -34,6 +34,12 @@ except:
     print('ERROR: please install spglib.')
     exit(0)
 try:
+    from pymatgen.entries.computed_entries import GibbsComputedStructureEntry
+    from pymatgen.core.structure import Structure
+except:
+    print('ERROR: please install pymatgen')
+    exit(0)
+try:
     import numpy as np
 except:
     print('ERROR: please install numpy.')
@@ -280,6 +286,7 @@ def parseStruct():
     ldate = len(date)
     while True:
         if 'nstruct' in date[i]:
+            forme = 0.
             hardness = 0.
             polar = 0.
             bandgap = 100.
@@ -346,7 +353,7 @@ def parseStruct():
                             i = k
                             lcurr = False
 
-            structData.append( [energy, hardness, nstruct, gtype, (lat, pos, typt, natom), polar, bandgap, xrddiff] )
+            structData.append( [energy, hardness, nstruct, gtype, (lat, pos, typt, natom), polar, bandgap, xrddiff, forme] )
             # print 'i', i, ldate
             if i +10 > ldate - 1  :
                 break
@@ -824,7 +831,7 @@ def write_vasp(pdir, cell, no, sgdata, wori, wprim):
     f.write('\n')
     f.write('Direct\n')
     for item in p:
-        f.write("%8.5f %8.5f %8.5f\n" % tuple(item))
+        f.write("%8.5f %8.5f %8.5f\n" % tuple(item[0:3]))
     f.close()
 
 def findsym(cell, prec, is_refine, is_prim):
@@ -1000,7 +1007,8 @@ def plot(struct, npop):
 
 def Zoutput(structure, options, num_proce, prec_pool, is_refine, is_prim, hard, fdir, d2, cl, norefine, hm, bg, xrd, lsur):
     global name_ele
-    global prec
+    global temperature_list
+    # global prec
 
     OutputData = []
     # for i in range(num_proce):
@@ -1019,6 +1027,40 @@ def Zoutput(structure, options, num_proce, prec_pool, is_refine, is_prim, hard, 
         outputdata.append(structure[i][5]) # 4 polar
         outputdata.append(structure[i][6]) # 5 bandgap
         outputdata.append(structure[i][7]) # 6 xrddiff
+        outputdata.append(structure[i][8]) # 7 form energy
+
+        poscar_string  = "POSCAR\n"
+        poscar_string += "1.0\n"
+        for vec in structure[i][4][0]:
+            poscar_string += "  %12.5f  %12.5f  %12.5f\n" % (vec[0], vec[1], vec[2])
+        # print(name_ele, structure[i][4][2])
+
+        poscar_string += "     ".join(name_ele)
+        poscar_string += "\n"
+
+        poscar_string += "     ".join(list(map(str, structure[i][4][2])))
+        poscar_string += "\n"
+        poscar_string += "Direct\n"
+        for pos in structure[i][4][1]:
+            poscar_string += "  %12.5f  %12.5f  %12.5f\n" % (pos[0], pos[1], pos[2])
+
+        # print(poscar_string)
+        # print(structure[i][8])
+
+        gibbs = []
+        for temp in temperature_list:
+            gbs = GibbsComputedStructureEntry(
+                    Structure.from_str(poscar_string, "poscar"),    # Structure
+                    structure[i][8],    # form enthalpy
+                    temp=temp,
+                    gibbs_model="SISSO",
+                    entry_id=f"{temp}k",
+                )
+            gibbs.append(gbs.energy_per_atom)
+
+        # print("gibbs", gibbs)
+        outputdata.append(gibbs) # 8 gbs list
+
 
         if norefine:
             pass
@@ -1089,6 +1131,7 @@ def Zoutput(structure, options, num_proce, prec_pool, is_refine, is_prim, hard, 
         fw.write("        No.     GenType    Enthalpy")
     else:
         fw.write("        No.      Enthalpy")
+    fw.write("      FormE")
     if hard: fw.write("    Hardness")
     if hm:   fw.write("       Polar")
     if bg:   fw.write("    Diff_gap")
@@ -1098,19 +1141,25 @@ def Zoutput(structure, options, num_proce, prec_pool, is_refine, is_prim, hard, 
     else:
         for i in range(len(prec_pool)):
             fw.write("%15g" % prec_pool[i])
+        for i in range(len(temperature_list)):
+            fw.write("%12g" % temperature_list[i])
     fw.write("\n")
 
     for i in range(len(OutputData)):
         if abs(OutputData[i][0] - 610612509.) > 0.1:
             if options.is_gt :
-                fw.write("%4d (%4d)  %10s%12.5f" % (i+1, OutputData[i][1], OutputData[i][2], OutputData[i][0]))
+                # fw.write("%4d (%4d)  %10s%12.5f" % (i+1, OutputData[i][1], OutputData[i][2], OutputData[i][0]))
+                fw.write("%4d (%4d)  %10s%12.5f%12.5f" % (i+1, OutputData[i][1], OutputData[i][2], OutputData[i][0], OutputData[i][7]))
             else:
-                fw.write("%4d (%4d)  %12.5f" % (i+1, OutputData[i][1], OutputData[i][0]))
+                # fw.write("%4d (%4d)  %12.5f" % (i+1, OutputData[i][1], OutputData[i][0]))
+                fw.write("%4d (%4d)  %12.5f%12.5f" % (i+1, OutputData[i][1], OutputData[i][0], OutputData[i][7]))
         else:
             if options.is_gt:
-                fw.write("%4d (%4d)  %10s%12s" % (i+1, OutputData[i][1], OutputData[i][2], 'NULL'))
+                # fw.write("%4d (%4d)  %10s%12s" % (i+1, OutputData[i][1], OutputData[i][2], 'NULL'))
+                fw.write("%4d (%4d)  %10s%12s%12.5f" % (i+1, OutputData[i][1], OutputData[i][2], 'NULL', OutputData[i][7]))
             else:
-                fw.write("%4d (%4d)  %12s" % (i+1, OutputData[i][1], 'NULL'))
+                # fw.write("%4d (%4d)  %12s" % (i+1, OutputData[i][1], 'NULL'))
+                fw.write("%4d (%4d)  %12s%12.5f" % (i+1, OutputData[i][1], 'NULL', OutputData[i][7]))
         if hard:
             fw.write("%12.5f" % (OutputData[i][3] * -1))
         if hm:
@@ -1123,8 +1172,11 @@ def Zoutput(structure, options, num_proce, prec_pool, is_refine, is_prim, hard, 
         if norefine:
             pass
         else:
-            for sspg in OutputData[i][7:]:
+            for sspg in OutputData[i][9:]:
                 fw.write("%15s" % (sspg[1].strip() + "(" + str(sspg[0]) + ")"))
+
+        for ggibbs in OutputData[i][8]:
+            fw.write("%12.5f" % ggibbs)
         fw.write("\n")
     fw.close()
 
@@ -1373,6 +1425,8 @@ def vsckit(structure, vsce, name_ele, options, prec_pool, is_refine, is_prim, ha
         str1 = '_'.join(map(str, typt))
         BStruct[int(typt_dict[str1])].append(x)
 
+    # print(BStruct)
+    # print(vsce)
 
     for i in range(len(BStruct)):
         # print len(BStruct[i])
@@ -1380,14 +1434,16 @@ def vsckit(structure, vsce, name_ele, options, prec_pool, is_refine, is_prim, ha
             e1 = 0.
             for k in range(len(vsce)):
                 e1 += vsce[k]*BStruct[i][j][4][2][k]
-            # forme = (BStruct[i][j][0] * BStruct[i][j][4][3] - e1) / BStruct[i][j][4][3]
-            forme = BStruct[i][j][0]
-            BStruct[i][j].append(forme)
+            forme = (BStruct[i][j][0] * BStruct[i][j][4][3] - e1) / BStruct[i][j][4][3]
+            # forme = BStruct[i][j][0]
+            # BStruct[i][j].append(forme)
+            BStruct[i][j][8] = forme
 
     # for i in range(len(BStruct)):
     for key in typt_dict :
         i = typt_dict[key]
-        SBS = sorted(BStruct[i], key = lambda x : x[-1])
+        # SBS = sorted(BStruct[i], key = lambda x : x[-1])
+        SBS = sorted(BStruct[i], key = lambda x : x[0])
         if options.is_all:
             num_proce = len(SBS)
         else:
@@ -1427,6 +1483,7 @@ def gcdnum(xl):
 def run():
     global name_ele
     global prec
+    global temperature_list
 
     pinfinty = float(1e300)
     einfinty = float(-1e300)
@@ -1460,7 +1517,8 @@ def run():
                          mine = einfinty,
                          is_vsc_split = False, 
                          rme = 0.001, 
-                         maxe = pinfinty )
+                         maxe = pinfinty,
+                         temperature_list = None )
     parser.add_option("-a", dest="is_all", action="store_true")
     parser.add_option("--cif", dest="is_wcif", action="store_true")
     parser.add_option("--pos", "--vasp", dest="is_wvasp", action="store_true")
@@ -1489,6 +1547,7 @@ def run():
     parser.add_option("--rme","--remove-energy",dest="rme", type="float")
     parser.add_option("--plotch","--plot_convexhull",dest="plotch", action="store_true")
     parser.add_option("--plotevo","--plot_evo",dest="plotevo", action="store_true")
+    parser.add_option("--temps","--temperature_list",dest="temperature_list", action="store", type="string")
 
 
     parser.add_option("-v", "--version", dest="is_v", action="store_true")
@@ -1669,7 +1728,7 @@ def run():
         else:
             struct = parseOpt('opt', hm)
 
-    # struct [0] enthalpy; [1] hardness; [2] nstruct; [3] gtype; [4] cell; [5] polar; [6] bandgap
+    # struct [0] enthalpy; [1] hardness; [2] nstruct; [3] gtype; [4] cell; [5] polar; [6] bandgap; [7] xrddiff, [8] forme=0
 
     structure = []
 
@@ -1709,6 +1768,11 @@ def run():
             print('warning: parse multi tolerance error')
             prec_pool = [options.prec]
 
+    if options.temperature_list is not None:
+        temperature_list = list(map(float, options.temperature_list.split()))
+    else:
+        temperature_list = [300, 1800]
+
     if options.is_wvasp or options.is_wcif:
         is_refine = True
         is_prim = options.is_prim
@@ -1734,6 +1798,14 @@ def run():
             structure.sort(key=lambda x:x[1])
         else:
             structure.sort(key=lambda x:x[0])
+            print(vsce)
+            for j in range(len(structure)):
+                e1 = 0.
+                for k in range(len(vsce)):
+                    e1 += vsce[k]*structure[j][4][2][k]
+                forme = (structure[j][0] * structure[j][4][3] - e1) / structure[j][4][3]
+                # forme = BStruct[i][j][0]
+                structure[j][8] = forme
         if hm:
             structure.sort(key=lambda x:x[5], reverse=True)
         if bg:
