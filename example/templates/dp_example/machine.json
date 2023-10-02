@@ -15,7 +15,7 @@
       "grouped": true,
       "disk_size": 200,
       "max_run_time": 40,
-      "machine_type": "c8_m64_cpu",
+      "machine_type": "c2_m8_cpu",
       "platform": "ali",
       "on_demand": 0,
       "out_files": []
