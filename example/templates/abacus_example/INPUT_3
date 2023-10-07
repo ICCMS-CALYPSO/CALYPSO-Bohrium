@@ -7,13 +7,13 @@ ntype                   2
 # symmetry_prec           1.8897e-3
 
 #Parameters (2.Iteration)
-relax_nmax              100
+relax_nmax              10
 force_thr_ev            0.01
 stress_thr              5
 relax_method            cg
 out_stru                1
 
-ecutwfc                 100
+ecutwfc                 80
 scf_thr                 1e-6
 scf_nmax                100
 
@@ -32,7 +32,7 @@ mixing_type             pulay
 mixing_beta             0.7
 
 ks_solver               dav
-kspacing                0.2
+kspacing                0.4
 #kpar                    4
 
 #Parameters (6.Stress)
