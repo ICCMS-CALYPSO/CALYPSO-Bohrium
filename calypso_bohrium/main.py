@@ -8,17 +8,24 @@ import click
 from dpdispatcher import Machine, Resources, Submission
 
 from calypso_bohrium.utils import get_value
-from calypso_bohrium.vasp import vasp_command, vasp_task, vasp_back
+from calypso_bohrium.dp import dp_command, dp_task, dp_back
 from calypso_bohrium.qe import qe_command, qe_task, qe_back
+from calypso_bohrium.vasp import vasp_command, vasp_task, vasp_back
 from calypso_bohrium.abacus import abacus_command, abacus_task, abacus_back
 
 
-dft_task = {'vasp':vasp_task, 'qe':qe_task, 'abacus':abacus_task}
-task_back = {'vasp':vasp_back, 'qe':qe_back, 'abacus':abacus_back}
-dft_command = {'vasp':vasp_command, 'qe':qe_command, 'abacus':abacus_command}
+dft_task = {'vasp':vasp_task, 'qe':qe_task, 'abacus':abacus_task, 'dp':dp_task}
+task_back = {'vasp':vasp_back, 'qe':qe_back, 'abacus':abacus_back, 'dp':dp_back}
+dft_command = {'vasp':vasp_command, 'qe':qe_command, 'abacus':abacus_command, 'dp':dp_command}
 
 @click.command()
-@click.option("--dft", default="vasp", type=click.Choice(['vasp', 'qe', 'abacus']), help="dft calculator selection, support vasp and qe currently")
+@click.option(
+        "--dft",
+        default="vasp",
+        type=click.Choice(['vasp', 'qe', 'abacus', 'dp']),
+        help="dft calculator selection, support vasp qe abacus and dp currently",
+        )
+
 def main(dft):
 
     if get_value("Split") == "":
@@ -84,7 +91,7 @@ def main(dft):
             task_dir = "./data/step%03d.pop%03d" % (step, pop)
             task_back[dft](task_dir, pop)
 
-        os.system('mv *.sub lbg-*.sh *_fail *_finish log_dir/')
+        # os.system('mv *.sub lbg-*.sh *_fail *_finish log_dir/')
     
     os.system("calypso.x | tee caly.log")
 
