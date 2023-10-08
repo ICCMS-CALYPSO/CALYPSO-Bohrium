@@ -1271,7 +1271,7 @@ def plot(struct, npop):
 
     return 0
 
-def Zoutput(structure, options, num_proce, prec_pool, is_refine, is_prim, hard, fdir, d2, cl, norefine, hm, bg, xrd, lsur):
+def Zoutput(structure, options, num_proce, prec_pool, is_refine, is_prim, hard, fdir, d2, cl, norefine, hm, bg, xrd, lsur, lgibbs=False):
     global name_ele
     global temperature_list
     # global prec
@@ -1295,61 +1295,65 @@ def Zoutput(structure, options, num_proce, prec_pool, is_refine, is_prim, hard, 
         outputdata.append(structure[i][7]) # 6 xrddiff
         outputdata.append(structure[i][8]) # 7 form energy
 
-        poscar_string  = "POSCAR\n"
-        poscar_string += "1.0\n"
-        for vec in structure[i][4][0]:
-            poscar_string += "  %12.5f  %12.5f  %12.5f\n" % (vec[0], vec[1], vec[2])
-        # print(name_ele, structure[i][4][2])
+        if lgibbs:
+            poscar_string  = "POSCAR\n"
+            poscar_string += "1.0\n"
+            for vec in structure[i][4][0]:
+                poscar_string += "  %12.5f  %12.5f  %12.5f\n" % (vec[0], vec[1], vec[2])
+            # print(name_ele, structure[i][4][2])
 
-        poscar_string += "     ".join(name_ele)
-        poscar_string += "\n"
+            poscar_string += "     ".join(name_ele)
+            poscar_string += "\n"
 
-        poscar_string += "     ".join(list(map(str, structure[i][4][2])))
-        poscar_string += "\n"
-        poscar_string += "Direct\n"
-        for pos in structure[i][4][1]:
-            poscar_string += "  %12.5f  %12.5f  %12.5f\n" % (pos[0], pos[1], pos[2])
-        # print(poscar_string)
+            poscar_string += "     ".join(list(map(str, structure[i][4][2])))
+            poscar_string += "\n"
+            poscar_string += "Direct\n"
+            for pos in structure[i][4][1]:
+                poscar_string += "  %12.5f  %12.5f  %12.5f\n" % (pos[0], pos[1], pos[2])
+            # print(poscar_string)
 
-        dG_formula = ""
-        for dG_ele, dG_atoms in zip(name_ele, structure[i][4][2]):
-            dG_formula += str(dG_ele) + str(dG_atoms)
-        # print("dG_formula: ", dG_formula)
-        # print(type(structure[i][4][0]), structure[i][4][0])
-        # print(type(structure[i][4][1]), len(structure[i][4][1]))
+            dG_formula = ""
+            for dG_ele, dG_atoms in zip(name_ele, structure[i][4][2]):
+                dG_formula += str(dG_ele) + str(dG_atoms)
+            # print("dG_formula: ", dG_formula)
+            # print(type(structure[i][4][0]), structure[i][4][0])
+            # print(type(structure[i][4][1]), len(structure[i][4][1]))
 
 
-        dG_V = np.linalg.det(structure[i][4][0]) / len(structure[i][4][1])
-        # print(dG_V)
-        # print("dG_V: ", dG_V)
-        # sys.exit()
+            dG_V = np.linalg.det(structure[i][4][0]) / len(structure[i][4][1])
+            # print(dG_V)
+            # print("dG_V: ", dG_V)
+            # sys.exit()
 
-        # print(poscar_string)
-        # print("enthalpy: ", structure[i][0])
-        # print("formE: ", structure[i][8])
+            # print(poscar_string)
+            # print("enthalpy: ", structure[i][0])
+            # print("formE: ", structure[i][8])
 
-        path_to_structure = False
-        gbs = PredictG(dG_formula,
+            path_to_structure = False
+            gbs = PredictG(dG_formula,
                        structure[i][8],
                        path_to_structure,
                        path_to_masses=None,
                        path_to_chempots=None)
-        gibbs = []
-        for temp in temperature_list:
-            # gbs = GibbsComputedStructureEntry(
-            #         Structure.from_str(poscar_string, "poscar"),    # Structure
-            #         structure[i][8],    # form enthalpy
-            #         temp=temp,
-            #         gibbs_model="SISSO",
-            #         entry_id=f"{temp}k",
-            #     )
-            # gibbs.append(gbs.energy_per_atom)
-            # print(temp)
-            # print("gbs: ", gbs.dG(T=temp, vol_per_atom=dG_V))
-            gibbs.append(gbs.dG(T=temp, vol_per_atom=dG_V))
+            gibbs = []
+            for temp in temperature_list:
+                # gbs = GibbsComputedStructureEntry(
+                #         Structure.from_str(poscar_string, "poscar"),    # Structure
+                #         structure[i][8],    # form enthalpy
+                #         temp=temp,
+                #         gibbs_model="SISSO",
+                #         entry_id=f"{temp}k",
+                #     )
+                # gibbs.append(gbs.energy_per_atom)
+                # print(temp)
+                # print("gbs: ", gbs.dG(T=temp, vol_per_atom=dG_V))
+                # gibbs.append(gbs.dG(T=temp, vol_per_atom=dG_V))
+                gibbs.append(gbs.G(T=temp, vol_per_atom=dG_V))
 
-        # print("gibbs", gibbs)
-        # sys.exit()
+            # print("gibbs", gibbs)
+            # sys.exit()
+        else:
+            gibbs = []
         outputdata.append(gibbs) # 8 gbs list
 
 
@@ -1422,7 +1426,8 @@ def Zoutput(structure, options, num_proce, prec_pool, is_refine, is_prim, hard, 
         fw.write("        No.     GenType    Enthalpy")
     else:
         fw.write("        No.      Enthalpy")
-    fw.write("      FormE")
+    if lgibbs:
+        fw.write("      FormE")
     if hard: fw.write("    Hardness")
     if hm:   fw.write("       Polar")
     if bg:   fw.write("    Diff_gap")
@@ -1432,25 +1437,34 @@ def Zoutput(structure, options, num_proce, prec_pool, is_refine, is_prim, hard, 
     else:
         for i in range(len(prec_pool)):
             fw.write("%15g" % prec_pool[i])
-        for i in range(len(temperature_list)):
-            fw.write("%12g" % temperature_list[i])
+        if lgibbs:
+            for i in range(len(temperature_list)):
+                fw.write("%12g" % temperature_list[i])
     fw.write("\n")
 
     for i in range(len(OutputData)):
         if abs(OutputData[i][0] - 610612509.) > 0.1:
             if options.is_gt :
-                # fw.write("%4d (%4d)  %10s%12.5f" % (i+1, OutputData[i][1], OutputData[i][2], OutputData[i][0]))
-                fw.write("%4d (%4d)  %10s%12.5f%12.5f" % (i+1, OutputData[i][1], OutputData[i][2], OutputData[i][0], OutputData[i][7]))
+                if not lgibbs:
+                    fw.write("%4d (%4d)  %10s%12.5f" % (i+1, OutputData[i][1], OutputData[i][2], OutputData[i][0]))
+                else:
+                    fw.write("%4d (%4d)  %10s%12.5f%12.5f" % (i+1, OutputData[i][1], OutputData[i][2], OutputData[i][0], OutputData[i][7]))
             else:
-                # fw.write("%4d (%4d)  %12.5f" % (i+1, OutputData[i][1], OutputData[i][0]))
-                fw.write("%4d (%4d)  %12.5f%12.5f" % (i+1, OutputData[i][1], OutputData[i][0], OutputData[i][7]))
+                if not lgibbs:
+                    fw.write("%4d (%4d)  %12.5f" % (i+1, OutputData[i][1], OutputData[i][0]))
+                else:
+                    fw.write("%4d (%4d)  %12.5f%12.5f" % (i+1, OutputData[i][1], OutputData[i][0], OutputData[i][7]))
         else:
             if options.is_gt:
-                # fw.write("%4d (%4d)  %10s%12s" % (i+1, OutputData[i][1], OutputData[i][2], 'NULL'))
-                fw.write("%4d (%4d)  %10s%12s%12.5f" % (i+1, OutputData[i][1], OutputData[i][2], 'NULL', OutputData[i][7]))
+                if not lgibbs:
+                    fw.write("%4d (%4d)  %10s%12s" % (i+1, OutputData[i][1], OutputData[i][2], 'NULL'))
+                else:
+                    fw.write("%4d (%4d)  %10s%12s%12.5f" % (i+1, OutputData[i][1], OutputData[i][2], 'NULL', OutputData[i][7]))
             else:
-                # fw.write("%4d (%4d)  %12s" % (i+1, OutputData[i][1], 'NULL'))
-                fw.write("%4d (%4d)  %12s%12.5f" % (i+1, OutputData[i][1], 'NULL', OutputData[i][7]))
+                if not lgibbs:
+                    fw.write("%4d (%4d)  %12s" % (i+1, OutputData[i][1], 'NULL'))
+                else:
+                    fw.write("%4d (%4d)  %12s%12.5f" % (i+1, OutputData[i][1], 'NULL', OutputData[i][7]))
         if hard:
             fw.write("%12.5f" % (OutputData[i][3] * -1))
         if hm:
@@ -1466,8 +1480,9 @@ def Zoutput(structure, options, num_proce, prec_pool, is_refine, is_prim, hard, 
             for sspg in OutputData[i][9:]:
                 fw.write("%15s" % (sspg[1].strip() + "(" + str(sspg[0]) + ")"))
 
-        for ggibbs in OutputData[i][8]:
-            fw.write("%12.5f" % ggibbs)
+        if lgibbs:
+            for ggibbs in OutputData[i][8]:
+                fw.write("%12.5f" % ggibbs)
         fw.write("\n")
     fw.close()
 
@@ -1855,7 +1870,6 @@ def run():
 
 
     (sysname, name_ele, npop, mol, hard, vsc, vsce, d2, cl, hm, lsur, bg, xrd, ts, num_neb) = readinput()
-    vsce = [-4.58128953, -3.13316847875]
 
     if options.plotch:
         from pymatgen.analysis.phase_diagram import PDEntry, PhaseDiagram, PDPlotter
@@ -1937,9 +1951,12 @@ def run():
     if options.plotevo:
         import matplotlib.pyplot as plt
         import matplotlib
-        import scienceplots
+        try:
+            import scienceplots
+            plt.style.use(['science', 'ieee'])
+        except:
+            print("the plot will not use the scienceplots")
         
-        plt.style.use(['science', 'ieee'])
         
         
         # data
@@ -2062,12 +2079,14 @@ def run():
 
     avail_temps = ['300', '400', '500', '600', '700', '800', '900', '1000', '1100', '1200', '1300', '1400', '1500', '1600', '1700', '1800', '1900', '2000']
     if options.temperature_list is not None:
+        lgibbs = True
         temperature_list = list(map(int, options.temperature_list.split()))
         for temp in temperature_list:
             if str(temp) not in avail_temps:
                 raise NotImplementedError(f"temperatures only support {avail_temps}")
     else:
         temperature_list = [300, 1800]
+        lgibbs = False
 
     if options.is_wvasp or options.is_wcif:
         is_refine = True
@@ -2094,14 +2113,17 @@ def run():
             structure.sort(key=lambda x:x[1])
         else:
             structure.sort(key=lambda x:x[0])
-            print(vsce)
-            for j in range(len(structure)):
-                e1 = 0.
-                for k in range(len(vsce)):
-                    e1 += vsce[k]*structure[j][4][2][k]
-                forme = (structure[j][0] * structure[j][4][3] - e1) / structure[j][4][3]
-                # forme = BStruct[i][j][0]
-                structure[j][8] = forme
+            if lgibbs:
+                for j in range(len(structure)):
+                    e1 = 0.
+                    for k in range(len(vsce)):
+                        e1 += vsce[k]*structure[j][4][2][k]
+                    forme = (structure[j][0] * structure[j][4][3] - e1) / structure[j][4][3]
+                    # forme = BStruct[i][j][0]
+                    structure[j][8] = forme
+            else:
+                for j in range(len(structure)):
+                    structure[j][8] = 0
         if hm:
             structure.sort(key=lambda x:x[5], reverse=True)
         if bg:
@@ -2110,7 +2132,7 @@ def run():
             structure.sort(key=lambda x:x[7])
 
         fdir = './'
-        Zoutput(structure, options, num_proce, prec_pool, is_refine, is_prim, hard, fdir, d2, cl, norefine, hm, bg, xrd, lsur)
+        Zoutput(structure, options, num_proce, prec_pool, is_refine, is_prim, hard, fdir, d2, cl, norefine, hm, bg, xrd, lsur, lgibbs=lgibbs)
 
 
 
