@@ -21,7 +21,7 @@ def abacus_command(N_INCAR, ncpu):
         command_runabacus =  f"cp INPUT_1 INPUT; mpirun -n {ncpu} abacus > fp.log 2>&1;"
         command_runabacus += " if [ -f OUT.ABACUS/STRU_ION_D ]; then cp OUT.ABACUS/STRU_ION_D ./STRU;cp INPUT_2 INPUT; " 
         command_runabacus += f"mpirun -n {ncpu} abacus > fp.log 2>&1; "
-        command_runabacus += "else : ; fi "
+        command_runabacus += "else : ; fi; "
         command_runabacus += " if [ -f OUT.ABACUS/STRU_ION_D ]; then cp OUT.ABACUS/STRU_ION_D ./STRU;cp INPUT_3 INPUT; " 
         command_runabacus += f"mpirun -n {ncpu} abacus > fp.log 2>&1; "
         command_runabacus += "else : ; fi "
