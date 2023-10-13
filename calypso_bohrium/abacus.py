@@ -31,6 +31,7 @@ def abacus_command(N_INCAR, ncpu):
 def abacus_task(pop, task_dir, N_INCAR, command, backward_files=["STRU_ION_D", "running_cell-relax.log"]):
 
    if not os.path.exists('pickup') or (os.path.exists('pickup') and os.path.exists('restart')):
+       shutil.copyfile("POSCAR_%d" % pop, os.path.join(task_dir, "POSCAR.ori"))
        shutil.copyfile("STRU_%d" % pop, os.path.join(task_dir, "STRU"))
        shutil.copyfile("STRU_%d" % pop, os.path.join(task_dir, "STRU.ori"))
        for n_incar in range(1, N_INCAR + 1):
