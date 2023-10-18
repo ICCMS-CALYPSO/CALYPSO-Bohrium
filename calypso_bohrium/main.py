@@ -38,9 +38,9 @@ def main(dft):
 
     lsurface = get_value("lsurface")  # "T"
     if lsurface == "T":
-        lsurface == True
+        lsurface = True
     else:
-        lsurface == False
+        lsurface = False
 
     machine = Machine.load_from_json("machine.json")
     resources = Resources.load_from_json("resources.json")
@@ -88,7 +88,7 @@ def main(dft):
 
         task_list = []
         for pop in range(1, PopSize + 1):
-            if lsurface == "T":
+            if lsurface :
                 task_dir = "./results/Generation_%d/Indv_%d" % (step, pop)
             else:
                 task_dir = "./data/step%03d.pop%03d" % (step, pop)
@@ -113,7 +113,7 @@ def main(dft):
             os.system('mv restart restart_done')
 
         for pop in range(1, PopSize + 1):
-            if lsurface == "T":
+            if lsurface :
                 task_dir = "./results/Generation_%d/Indv_%d" % (step, pop)
             else:
                 task_dir = "./data/step%03d.pop%03d" % (step, pop)
