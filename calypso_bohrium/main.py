@@ -10,16 +10,18 @@ from calypso_bohrium.utils import get_value
 from calypso_bohrium.dp import dp_command, dp_task, dp_back
 from calypso_bohrium.qe import qe_command, qe_task, qe_back
 from calypso_bohrium.vasp import vasp_command, vasp_task, vasp_back
+from calypso_bohrium.dftb import dftb_command, dftb_task, dftb_back
 from calypso_bohrium.abacus import abacus_command, abacus_task, abacus_back
 
 
-dft_task = {'vasp': vasp_task, 'qe': qe_task, 'abacus': abacus_task, 'dp': dp_task}
-task_back = {'vasp': vasp_back, 'qe': qe_back, 'abacus': abacus_back, 'dp': dp_back}
+dft_task = {"vasp": vasp_task, "qe": qe_task, "abacus": abacus_task, "dp": dp_task, "dftb": dftb_task}
+task_back = {"vasp": vasp_back, "qe": qe_back, "abacus": abacus_back, "dp": dp_back, "dftb": dftb_back}
 dft_command = {
-    'vasp': vasp_command,
-    'qe': qe_command,
-    'abacus': abacus_command,
-    'dp': dp_command,
+    "vasp": vasp_command,
+    "qe": qe_command,
+    "abacus": abacus_command,
+    "dp": dp_command,
+    "dftb": dftb_command,
 }
 
 
@@ -27,7 +29,7 @@ dft_command = {
 @click.option(
     "--dft",
     default="vasp",
-    type=click.Choice(['vasp', 'qe', 'abacus', 'dp']),
+    type=click.Choice(["vasp", "qe", "abacus", "dp", "dftb"]),
     help="dft calculator selection, support vasp qe abacus and dp currently",
 )
 def main(dft):
