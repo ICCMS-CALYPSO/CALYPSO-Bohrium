@@ -31,6 +31,8 @@ def main(dft):
     if get_value("Split") == "":
         os.system("echo 'Split = T' >> ./input.dat") 
 
+    lsurface = get_value("lsurface")    # "T"
+
     machine = Machine.load_from_json("machine.json")
     resources = Resources.load_from_json("resources.json")
 
@@ -59,6 +61,7 @@ def main(dft):
     
     Path('./log_dir').mkdir(parents=True, exist_ok=True)
 
+
     for step in range(PickStep, MaxStep + 1):
 
         if not os.path.exists('pickup'):
@@ -71,10 +74,13 @@ def main(dft):
     
         task_list = []
         for pop in range(1, PopSize + 1):
-            task_dir = "./data/step%03d.pop%03d" % (step, pop)
-            Path(task_dir).mkdir(parents=True, exist_ok=True)
+            if lsurface == "T":
+                task_dir = "./results/Generation_%d/Indv_%d" % (step, pop)
+            else:
+                task_dir = "./data/step%03d.pop%03d" % (step, pop)
+                Path(task_dir).mkdir(parents=True, exist_ok=True)
     
-            task = dft_task[dft](pop, task_dir, N_INCAR, command, out_files)
+            task = dft_task[dft](pop, task_dir, N_INCAR, command, out_files, lsurface=lsurface)
             task_list.append(task)
 
         submission = Submission(
@@ -88,10 +94,11 @@ def main(dft):
             os.system('mv restart restart_done')
     
         for pop in range(1, PopSize + 1):
-            task_dir = "./data/step%03d.pop%03d" % (step, pop)
-            task_back[dft](task_dir, pop)
-
-        # os.system('mv *.sub lbg-*.sh *_fail *_finish log_dir/')
+            if lsurface == "T":
+                task_dir = "./results/Generation_%d/Indv_%d" % (step, pop)
+            else:
+                task_dir = "./data/step%03d.pop%03d" % (step, pop)
+            task_back[dft](task_dir, pop, lsurface=lsurface)
     
     os.system("calypso.x | tee caly.log")
 
