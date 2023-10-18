@@ -37,6 +37,10 @@ def main(dft):
         os.system("echo 'Split = T' >> ./input.dat")
 
     lsurface = get_value("lsurface")  # "T"
+    if lsurface == "T":
+        lsurface == True
+    else:
+        lsurface == False
 
     machine = Machine.load_from_json("machine.json")
     resources = Resources.load_from_json("resources.json")
@@ -48,7 +52,14 @@ def main(dft):
 
     MaxStep = int(get_value("MaxStep"))
     PopSize = int(get_value("PopSize"))
-    N_INCAR = int(get_value("NumberOfLocalOptim", 2))
+    number_of_local_optim = get_value("NumberOfLocalOptim")
+    if number_of_local_optim is not "":
+        N_INCAR = int(number_of_local_optim)
+    else:
+        if lsurface:
+            N_INCAR = 2
+        else:
+            N_INCAR = 1
 
     if get_value("PickUp").lower().startswith("t"):
         PickStep = int(get_value("PickStep"))

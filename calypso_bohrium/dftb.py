@@ -61,7 +61,7 @@ def dftb_task(
             ]
             skf_list = glob.glob(f"{task_dir}/*.skf")
             forward_files = _forward_files + skf_list
-            backward_files = []
+            # backward_files = []
 
     task = Task(
         command=command,
@@ -78,4 +78,4 @@ def dftb_back(task_dir, pop, lsurface="F"):
         # shutil.copyfile(os.path.join(task_dir, "CONTCAR"), "CONTCAR_%d" % pop)
         # shutil.copyfile(os.path.join(task_dir, "OUTCAR"), "OUTCAR_%d" % pop)
     elif lsurface == "T":
-        pass
+        os.system(f"touch {task_dir}/.done.")

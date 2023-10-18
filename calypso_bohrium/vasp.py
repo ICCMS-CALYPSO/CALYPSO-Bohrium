@@ -42,7 +42,7 @@ def vasp_task(
             ]
 
         elif lsurface == "T":
-            command = "python surface_run.py > log 2>&1"
+            command = "python surface_run.py vasp > log 2>&1"
             forward_files = [
                 "INCAR-1",
                 "INCAR-2",
@@ -55,7 +55,7 @@ def vasp_task(
                 "submit.sh",
                 "surface_run.py",
             ]
-            backward_files = []
+            # backward_files = []
 
     task = Task(
         command=command,
@@ -71,4 +71,4 @@ def vasp_back(task_dir, pop, lsurface="F"):
         shutil.copyfile(os.path.join(task_dir, "CONTCAR"), "CONTCAR_%d" % pop)
         shutil.copyfile(os.path.join(task_dir, "OUTCAR"), "OUTCAR_%d" % pop)
     elif lsurface == "T":
-        pass
+        os.system(f"touch {task_dir}/.done.")
