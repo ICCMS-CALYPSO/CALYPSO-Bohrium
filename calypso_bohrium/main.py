@@ -46,7 +46,7 @@ def main(dft):
 
     MaxStep = int(get_value("MaxStep"))
     PopSize = int(get_value("PopSize"))
-    N_INCAR = int(get_value("NumberOfLocalOptim"))
+    N_INCAR = int(get_value("NumberOfLocalOptim", 2))
 
     if get_value("PickUp").lower().startswith("t"):
         PickStep = int(get_value("PickStep"))
