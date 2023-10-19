@@ -35,7 +35,8 @@ def abacus_task(
     N_INCAR,
     command,
     backward_files=["STRU_ION_D", "running_cell-relax.log"],
-    lsurface=False,
+    *args,
+    **kwargs,
 ):
     if not os.path.exists('pickup') or (
         os.path.exists('pickup') and os.path.exists('restart')
@@ -64,7 +65,7 @@ def abacus_task(
     return task
 
 
-def abacus_back(task_dir, pop, lsurface=False):
+def abacus_back(task_dir, pop, *args, **kwargs):
     back_stru_file = os.path.join(task_dir, "OUT.ABACUS", "STRU_ION_D")
 
     if os.path.exists(back_stru_file):

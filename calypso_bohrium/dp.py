@@ -23,7 +23,7 @@ def dp_task(
     N_INCAR,
     command,
     backward_files=["CONTCAR", "OUTCAR", "opt.log", "traj.traj", "err"],
-    lsurface=False,
+    *args, **kwargs,
 ):
     if not os.path.exists('pickup') or (
         os.path.exists('pickup') and os.path.exists('restart')
@@ -53,6 +53,6 @@ def dp_task(
     return task
 
 
-def dp_back(task_dir, pop, lsurface=False):
+def dp_back(task_dir, pop, *args, **kwargs,):
     shutil.copyfile(os.path.join(task_dir, "CONTCAR"), "CONTCAR_%d" % pop)
     shutil.copyfile(os.path.join(task_dir, "OUTCAR"), "OUTCAR_%d" % pop)

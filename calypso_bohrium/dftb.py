@@ -32,12 +32,12 @@ def dftb_task(
         "dftb_pin.hsd",
         "err",
     ],
-    lsurface="F",
+    *args, **kwargs
 ):
     if not os.path.exists('pickup') or (
         os.path.exists('pickup') and os.path.exists('restart')
     ):
-        if lsurface == "F":
+        if not lsurface:
             raise NotImplementedError("DFTB is only supported in surface!!!")
             # shutil.copyfile("dftb.gen-%d" % pop, os.path.join(task_dir, "dftb.gen"))
             # shutil.copyfile("dftb.gen-%d" % pop, os.path.join(task_dir, "dftb.gen.ori"))
@@ -50,8 +50,8 @@ def dftb_task(
             #     f"INCAR_{idx}" for idx in range(1, N_INCAR + 1)
             # ]
 
-        elif lsurface == "T":
-            command = "python surface_run.py > log 2>&1"
+        else:
+            command = "python surface_run.py dftb > log 2>&1"
             _forward_files = [
                 "dftb_in.hsd-1",
                 "dftb_in.hsd-2",
@@ -72,10 +72,11 @@ def dftb_task(
     return task
 
 
-def dftb_back(task_dir, pop, lsurface="F"):
-    if lsurface == "F":
+def dftb_back(task_dir, pop, *args, **kwargs):
+    if not lsurface:
         pass
         # shutil.copyfile(os.path.join(task_dir, "CONTCAR"), "CONTCAR_%d" % pop)
         # shutil.copyfile(os.path.join(task_dir, "OUTCAR"), "OUTCAR_%d" % pop)
-    elif lsurface == "T":
+    else:
         os.system(f"touch {task_dir}/.done.")
+
