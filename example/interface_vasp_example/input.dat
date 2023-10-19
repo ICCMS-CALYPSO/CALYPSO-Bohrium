@@ -1,0 +1,32 @@
+LSurface         = T #surface flag
+ICode            = 1 #1-vasp
+Rand_Scheme = 3
+System_type = INTERFACE
+Kgrid       = 0.5
+PopSize     = 5
+MaxStep     = 5
+Pre_surf_relax=F
+SPACESAVING = T
+InterfaceAuto = T
+InterfaceTranslation = b
+Forbi_thickness = 0.2
+Interface_thickness = 3.5
+@SURFACE_ATOMS #|atomic symbol|count|
+Ti 1
+O 4
+@END
+
+@COORDINATE_NUMBER
+Ti Ti  0 2 2.5 2.5
+O O   0 4 1.8 2.3
+Ti O  6 0 1.8 2.5
+O Ti  3 0 1.8 2.5
+@END
+#used to build the surface from bulk info
+#reconstruction symmetry
+Substrate        =   SUBSTRATE
+Substrate2     = SUBSTRATE2
+#Twin_Interface = 1
+#Twin_Surface = 1
+
+Split=T
