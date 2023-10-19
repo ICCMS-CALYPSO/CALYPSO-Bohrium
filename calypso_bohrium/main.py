@@ -48,7 +48,7 @@ def main(dft):
     if get_value("Split") == "":
         os.system("echo 'Split = T' >> ./input.dat")
 
-    lsurface = get_value("lsurface").startswith("T")  # "T"
+    lsurface = get_value("lsurface").upper().startswith("T")  # "T"
     # if lsurface == "T":
     #     lsurface = True
     # else:
