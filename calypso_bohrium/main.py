@@ -48,11 +48,11 @@ def main(dft):
     if get_value("Split") == "":
         os.system("echo 'Split = T' >> ./input.dat")
 
-    lsurface = get_value("lsurface")  # "T"
-    if lsurface == "T":
-        lsurface = True
-    else:
-        lsurface = False
+    lsurface = get_value("lsurface").startswith("T")  # "T"
+    # if lsurface == "T":
+    #     lsurface = True
+    # else:
+    #     lsurface = False
 
     machine = Machine.load_from_json("machine.json")
     resources = Resources.load_from_json("resources.json")
