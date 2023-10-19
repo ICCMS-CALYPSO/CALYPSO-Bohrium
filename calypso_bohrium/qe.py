@@ -64,7 +64,7 @@ def qe_command(N_INCAR, ncpu):
 
 
 def qe_task(
-    pop, task_dir, N_INCAR, command, backward_files=['out.pw', 'pwscf', 'log', 'err']
+    pop, task_dir, N_INCAR, command, backward_files=['out.pw', 'pwscf', 'log', 'err'], lsurface=False,
 ):
     pp_dir, _pp_name = get_pp('pw_input_1')
     if not os.path.exists('pickup') or (
@@ -94,7 +94,7 @@ def qe_task(
     return task
 
 
-def qe_back(task_dir, pop):
+def qe_back(task_dir, pop, lsurface=False):
     # natoms = get_pwscf_natoms(os.path.join(task_dir, "pwscf.ori"))
     # os.system(f'echo {str(natoms)} > natoms ')
     # os.system('cat natoms {os.path.join(task_dir, "pwscf.ori")} > {os.path.join(task_dir, "pwscf.ori")}')
