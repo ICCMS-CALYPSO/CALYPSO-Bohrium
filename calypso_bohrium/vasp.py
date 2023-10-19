@@ -29,7 +29,7 @@ def vasp_task(
     if not os.path.exists('pickup') or (
         os.path.exists('pickup') and os.path.exists('restart')
     ):
-        if not lsurface :
+        if not lsurface:
             shutil.copyfile("POSCAR_%d" % pop, os.path.join(task_dir, "POSCAR"))
             shutil.copyfile("POSCAR_%d" % pop, os.path.join(task_dir, "POSCAR.ori"))
             for n_incar in range(1, N_INCAR + 1):
@@ -41,7 +41,7 @@ def vasp_task(
                 f"INCAR_{idx}" for idx in range(1, N_INCAR + 1)
             ]
 
-        elif lsurface :
+        elif lsurface:
             command = "python surface_run.py vasp > log 2>&1"
             forward_files = [
                 "INCAR-1",
@@ -67,8 +67,8 @@ def vasp_task(
 
 
 def vasp_back(task_dir, pop, lsurface=False):
-    if not lsurface :
+    if not lsurface:
         shutil.copyfile(os.path.join(task_dir, "CONTCAR"), "CONTCAR_%d" % pop)
         shutil.copyfile(os.path.join(task_dir, "OUTCAR"), "OUTCAR_%d" % pop)
-    elif lsurface :
+    elif lsurface:
         os.system(f"touch {task_dir}/.done.")

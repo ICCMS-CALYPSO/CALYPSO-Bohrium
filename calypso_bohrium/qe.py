@@ -64,7 +64,12 @@ def qe_command(N_INCAR, ncpu):
 
 
 def qe_task(
-    pop, task_dir, N_INCAR, command, backward_files=['out.pw', 'pwscf', 'log', 'err'], lsurface=False,
+    pop,
+    task_dir,
+    N_INCAR,
+    command,
+    backward_files=['out.pw', 'pwscf', 'log', 'err'],
+    lsurface=False,
 ):
     pp_dir, _pp_name = get_pp('pw_input_1')
     if not os.path.exists('pickup') or (

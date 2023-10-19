@@ -14,8 +14,20 @@ from calypso_bohrium.dftb import dftb_command, dftb_task, dftb_back
 from calypso_bohrium.abacus import abacus_command, abacus_task, abacus_back
 
 
-dft_task = {"vasp": vasp_task, "qe": qe_task, "abacus": abacus_task, "dp": dp_task, "dftb": dftb_task}
-task_back = {"vasp": vasp_back, "qe": qe_back, "abacus": abacus_back, "dp": dp_back, "dftb": dftb_back}
+dft_task = {
+    "vasp": vasp_task,
+    "qe": qe_task,
+    "abacus": abacus_task,
+    "dp": dp_task,
+    "dftb": dftb_task,
+}
+task_back = {
+    "vasp": vasp_back,
+    "qe": qe_back,
+    "abacus": abacus_back,
+    "dp": dp_back,
+    "dftb": dftb_back,
+}
 dft_command = {
     "vasp": vasp_command,
     "qe": qe_command,
@@ -88,7 +100,7 @@ def main(dft):
 
         task_list = []
         for pop in range(1, PopSize + 1):
-            if lsurface :
+            if lsurface:
                 task_dir = "./results/Generation_%d/Indv_%d" % (step, pop)
             else:
                 task_dir = "./data/step%03d.pop%03d" % (step, pop)
@@ -113,7 +125,7 @@ def main(dft):
             os.system('mv restart restart_done')
 
         for pop in range(1, PopSize + 1):
-            if lsurface :
+            if lsurface:
                 task_dir = "./results/Generation_%d/Indv_%d" % (step, pop)
             else:
                 task_dir = "./data/step%03d.pop%03d" % (step, pop)
