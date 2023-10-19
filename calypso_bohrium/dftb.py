@@ -32,6 +32,7 @@ def dftb_task(
         "dftb_pin.hsd",
         "err",
     ],
+    lsurface=False,
     *args, **kwargs
 ):
     if not os.path.exists('pickup') or (
@@ -72,7 +73,7 @@ def dftb_task(
     return task
 
 
-def dftb_back(task_dir, pop, *args, **kwargs):
+def dftb_back(task_dir, pop, lsurface=False, *args, **kwargs):
     if not lsurface:
         pass
         # shutil.copyfile(os.path.join(task_dir, "CONTCAR"), "CONTCAR_%d" % pop)
